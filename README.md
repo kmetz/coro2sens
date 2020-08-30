@@ -19,7 +19,7 @@ Based on [ideas from Umwelt-Campus Birkenfeld](https://www.umwelt-campus.de/fors
 
 ## You need
 1. Any ESP32 or ESP8266 board (like a WEMOS D32 or WEMOS D1 Mini).
-1. Sensirion SCD30 carbon dioxide sensor module [mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==).
+1. Sensirion SCD30 carbon dioxide sensor module ([mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==)).
 1. 1 NeoPixel compatible RGB LED (WS2812B). 
 1. Optional: BME280 I<sup>2</sup>C pressure sensor module, improves accuracy.   
 1. Optional: 3V piezo buzzer or simple speaker.
