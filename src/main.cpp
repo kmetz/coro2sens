@@ -22,7 +22,7 @@
 #define BEEP_DURATION_MS 100
 #define BEEP_TONE 1047 // C6
 
-// Switch, is pulled LOW once for SWITCH_DURATION_MS when CO2 level becomes critical.
+// Switch, is pulled HIGH once for SWITCH_DURATION_MS when CO2 level becomes critical.
 #define SWITCH_PIN 12
 #define SWITCH_DURATION_MS 200
 
