@@ -1,10 +1,12 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include <paulvha_SCD30.h>
 #include <Adafruit_BME280.h>
 #include <Adafruit_NeoPixel.h>
 #ifdef ESP32
-#include "Tone32.h"
+#include <SparkFun_SCD30_Arduino_Library.h>
+#include <Tone32.h>
+#else
+#include <paulvha_SCD30.h>
 #endif
 
 
