@@ -95,10 +95,10 @@ void setup() {
     Serial.println("BMP280 pressure sensor detected.");
     bme280isConnected = true;
     bme280.setSampling(Adafruit_BME280::MODE_FORCED,
-                       Adafruit_BME280::SAMPLING_NONE, // Temperature.
-                       Adafruit_BME280::SAMPLING_X1, // Pressure.
-                       Adafruit_BME280::SAMPLING_NONE, // Humidity.
-                       Adafruit_BME280::FILTER_OFF);
+                       Adafruit_BME280::SAMPLING_X1, // Temperature.
+                       Adafruit_BME280::SAMPLING_X16, // Pressure.
+                       Adafruit_BME280::SAMPLING_X1, // Humidity.
+                       Adafruit_BME280::FILTER_X16);
   }
   else {
     Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
