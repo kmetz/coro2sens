@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <Wire.h>
-#include "SparkFun_SCD30_Arduino_Library.h"
+#include <paulvha_SCD30.h>
 #include <Adafruit_BME280.h>
 #include <Adafruit_NeoPixel.h>
 #ifdef ESP32
