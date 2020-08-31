@@ -51,9 +51,9 @@ bool alarmHasTriggered = false;
  * Triggered once when the CO2 level goes critical.
  */
 void alarmOnce() {
-  digitalWrite(SWITCH_PIN, LOW);
-  delay(SWITCH_DURATION_MS);
   digitalWrite(SWITCH_PIN, HIGH);
+  delay(SWITCH_DURATION_MS);
+  digitalWrite(SWITCH_PIN, LOW);
 }
 
 
@@ -72,7 +72,6 @@ void setup() {
   // Initialize pins.
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(SWITCH_PIN, OUTPUT);
-  digitalWrite(SWITCH_PIN, HIGH);
 
   // Initialize LED.
   led.begin();
