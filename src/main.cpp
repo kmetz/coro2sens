@@ -124,7 +124,7 @@ void loop() {
     led.setPixelColor(0, 0, 255, 0); // Green.
   }
   else if (co2 < 2000) {
-    led.setPixelColor(0, 255, 127, 0); // Yellow.
+    led.setPixelColor(0, 255, 255, 0); // Yellow.
   }
   else {
     led.setPixelColor(0, 255, 0, 0); // Red.
