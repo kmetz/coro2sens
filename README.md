@@ -28,15 +28,15 @@ Based on [ideas from Umwelt-Campus Birkenfeld](https://www.umwelt-campus.de/fors
 
 ### Wiring
 
-| ESP pin     | goes to                                    |
-|:------------|:-------------------------------------------|
-| 3V3         | SCD30 VIN, BME280 VIN                      |
-| 5V          | LED +5V                                    |
-| GND         | SCD30 GND, BME280 GND, LED GND, Buzzer (-) |
-| SCL / D1    | SCD30 SCL, BME280 SCL                      |
-| SDA / D2    | SCD30 SDA, BME280 SDA                      |
-| GPIO 0 / D3 | LED DIN                                    |
-| GPIO 2 / D4 | Buzzer (+)                                 |
+| ESP pin      | goes to                                    |
+|:-------------|:-------------------------------------------|
+| 3V3          | SCD30 VIN, BME280 VIN                      |
+| 5V           | LED +5V                                    |
+| GND          | SCD30 GND, BME280 GND, LED GND, Buzzer (-) |
+| SCL / D1     | SCD30 SCL, BME280 SCL                      |
+| SDA / D2     | SCD30 SDA, BME280 SDA                      |
+| GPIO 0 / D3  | LED DIN                                    |
+| GPIO 14 / D5 | Buzzer (+)                                 |
 
 
 (GPIOs can easily be changed in `src/main.cpp`)

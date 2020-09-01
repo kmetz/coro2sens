@@ -20,7 +20,7 @@
 #define LED_BRIGHTNESS 37
 
 // Buzzer, activated continuously when CO2 level is critical.
-#define BUZZER_PIN 2
+#define BUZZER_PIN 14
 #define BEEP_DURATION_MS 100
 #define BEEP_TONE 1047 // C6
 
