@@ -123,7 +123,7 @@ void loop() {
   // Log all sensor values.
   Serial.printf(
     "[SCD30]  temp: %.2f°C, humid: %.2f%%, CO2: %dppm\r\n",
-    scd30.getHumidity(), scd30.getTemperature(), co2
+    scd30.getTemperature(), scd30.getHumidity(), co2
   );
   if (bme280isConnected) {
     Serial.printf(
