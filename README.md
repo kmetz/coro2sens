@@ -17,6 +17,11 @@ Build a simple device that warns if CO<sub>2</sub> concentration in a room becom
 Based on [ideas from Umwelt-Campus Birkenfeld](https://www.umwelt-campus.de/forschung/projekte/iot-werkstatt/ideen-zur-corona-krise), which are based on 2008 [research by the German Federal Environmental Agency](https://www.umweltbundesamt.de/sites/default/files/medien/pdfs/kohlendioxid_2008.pdf).
 
 
+## Web server
+You can read current levels and a simple graph for the last hour by connecting to the WiFi `coro2sens` that is created.
+Most devices will open a captive portal, immediately showing the data. You can also open `http://10.0.0.1/` in a browser.
+
+
 ## You need
 1. Any ESP32 or ESP8266 board (like a WEMOS D32 or WEMOS D1 Mini).
 1. Sensirion SCD30 carbon dioxide sensor module ([mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==)).
