@@ -51,9 +51,9 @@
 #define WIFI_AP_NAME "coro2sens"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
-#define LOG_MINUTES 1
-// Label describing long the graph is.
-#define TIME_LABEL "1 min"
+#define LOG_MINUTES 60
+// Label describing the time axis.
+#define TIME_LABEL "1 hour"
 
 // -----------------------------------------------
 
