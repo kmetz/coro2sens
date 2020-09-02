@@ -136,7 +136,7 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
                    0, (int) map(maxVal - 1000, 0, maxVal, 0, h), w, (int) map(1000, 0, maxVal, 0, h));
   // Line.
   response->print(R"(<path style="fill:none; stroke:black; stroke-width:2px" d=")");
-  for (uint32_t i = 0; i < LOG_SIZE; i++) {
+  for (uint32_t i = 0; i < LOG_SIZE; i += (LOG_SIZE / w)) {
     val = co2log[(co2logPos + i) % LOG_SIZE];
     x = (int) map(i, 0, LOG_SIZE, 0, w + (w / LOG_SIZE));
     y = h - (int) map(val, 0, maxVal, 0, h);
