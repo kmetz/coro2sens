@@ -6,6 +6,7 @@ Build a simple device that warns if CO<sub>2</sub> concentration in a room becom
 - Controls an RGB LED (green, yellow, red, like a traffic light).
 - A buzzer can be connected that alarms if levels are critical.
 - Also opens a WiFi portal which shows current readings and a graph (not connected to the internet).
+- Can be built for ~ $60 / 50€ (parts cost).
 
 This project was heavily inspired by [ideas from Umwelt-Campus Birkenfeld](https://www.umwelt-campus.de/forschung/projekte/iot-werkstatt/ideen-zur-corona-krise).
 
@@ -38,10 +39,10 @@ Most devices will open a captive portal, immediately showing the data. You can a
 1. Any ESP32 or ESP8266 board (like a [WEMOS D32](https://docs.wemos.cc/en/latest/d32/d32.html) (about $18 / 15€) or [WEMOS LOLIN D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html) (about $7 / 6€)).  
 ESP32 has bluetooth, for future expansion.
 1. [Sensirion SCD30](https://www.sensirion.com/en/environmental-sensors/carbon-dioxide-sensors/carbon-dioxide-sensors-co2/) I<sup>2</sup>C carbon dioxide sensor module ([mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==)) (around $50 / 40€).
-1. 1 NeoPixel compatible RGB LED (WS2812B).
-1. Optional: BME280 I<sup>2</sup>C pressure sensor module, improves accuracy (less than $5 / 4€).   
-1. Optional: 3V piezo buzzer or simple speaker.
-1. A nice case :)
+1. 1 [NeoPixel](https://www.adafruit.com/category/168) compatible RGB LED (WS2812B, like the V2 Flora RGB Smart NeoPixel LED, you can also remove one from a larger strip which might be cheaper).
+1. A 3V piezo buzzer or a small speaker.
+1. Optional: [Bosch BME280](https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/) I<sup>2</sup>C sensor module (like the GY-BME280 board), for  air pressure compensation, improves accuracy (less than $5 / 4€).   
+1. A nice case :) Make shure the sensor has enough air flow.
 
 
 ### Wiring
@@ -56,7 +57,7 @@ ESP32 has bluetooth, for future expansion.
 | GPIO 0 / D3  | LED DIN                                    |
 | GPIO 14 / D5 | Buzzer (+)                                 |
 
-(GPIOs can easily be changed in `src/main.cpp`)
+(GPIOs can easily be changed in `coro2sens.ino`)
 
 
 ### Flashing the ESP using [PlatfomIO](https://platformio.org/)
@@ -70,8 +71,8 @@ ESP32 has bluetooth, for future expansion.
 - Install [the latest Arduino IDE](https://www.arduino.cc/en/main/software).
 - [Download the latest code](https://github.com/kmetz/coro2sens/archive/master.zip) and unzip it somewhere.
 - Open `coro2sense.ino` in the `coro2sens` sub folder in your Arduino IDE.
-- Install (or update) your board platform  
-  (*Tools –> Board –> Board Manager...*):
+- Install (or update) your board platform:  
+  (*Tools –> Board –> Board Manager...*)
   - Install `esp8266` or `esp32`.
 - Install (or update) the following libraries using the built-in library manager (*Tools –> Library Manager...*)
   - For ESP8266:
@@ -81,8 +82,8 @@ ESP32 has bluetooth, for future expansion.
     - `SparkFun SCD30 Arduino Library`
     - `SparkFun BME280`
     - `Adafruit NeoPixel`
-- Install the following external libraries  
-  (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*):
+- Install the following external libraries:  
+  (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*)
   - For ESP8266:
     - [paulvha/scd30](https://github.com/paulvha/scd30) ([.zip](https://github.com/paulvha/scd30/archive/master.zip))
     - [me-no-dev/ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) ([.zip](https://github.com/me-no-dev/ESPAsyncTCP/archive/master.zip))
