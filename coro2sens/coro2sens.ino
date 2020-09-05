@@ -20,7 +20,7 @@
 #include <DNSServer.h>
 
 
-// SETUP -----------------------------------------
+// SETUP =======================================================================
 
 // CO2 Thresholds (ppm).
 //
@@ -57,7 +57,9 @@
 // Can range from 2 to 1800.
 #define MEASURE_INTERVAL_S 2
 
-// The WiFi name for the captive portal showing sensor values.
+// WiFi captive portal showing sensor values.
+// Set to false to disable.
+#define WIFI_PORTAL_ENABLED true
 #define WIFI_AP_NAME "coro2sens"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
@@ -65,7 +67,7 @@
 // Label describing the time axis.
 #define TIME_LABEL "1 hour"
 
-// -----------------------------------------------
+// =============================================================================
 
 
 #define LOG_SIZE (((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S)
@@ -205,20 +207,24 @@ void setup() {
   }
 
   // Initialize WiFi, DNS and web server.
-  WiFi.mode(WIFI_AP);
-  WiFi.softAPConfig(apIP, apIP, netMsk);
-  WiFi.softAP(WIFI_AP_NAME);
-  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer.start(53, "*", apIP);
-  server.on("/", HTTP_GET, handleCaptivePortal);
-  server.onNotFound(handleCaptivePortal);
-  server.begin();
+  if (WIFI_PORTAL_ENABLED) {
+    WiFiClass::mode(WIFI_AP);
+    WiFi.softAPConfig(apIP, apIP, netMsk);
+    WiFi.softAP(WIFI_AP_NAME);
+    dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+    dnsServer.start(53, "*", apIP);
+    server.on("/", HTTP_GET, handleCaptivePortal);
+    server.onNotFound(handleCaptivePortal);
+    server.begin();
+  }
 }
 
 
 void loop() {
   // Tasks that need to run continuously.
-  dnsServer.processNextRequest();
+  if (WIFI_PORTAL_ENABLED) {
+    dnsServer.processNextRequest();
+  }
 
   // Early exit.
   if ((millis() - lastMeasureTime) < (MEASURE_INTERVAL_S * 1000)) {
