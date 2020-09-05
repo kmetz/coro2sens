@@ -40,7 +40,7 @@ Most devices will open a captive portal, immediately showing the data. You can a
 ESP32 has bluetooth, for future expansion.
 1. [Sensirion SCD30](https://www.sensirion.com/en/environmental-sensors/carbon-dioxide-sensors/carbon-dioxide-sensors-co2/) I<sup>2</sup>C carbon dioxide sensor module ([mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==)) (around $50 / 40€).
 1. 1 NeoPixel compatible RGB LED (WS2812B).
-1. Optional: BME280 I<sup>2</sup>C pressure sensor module, improves accuracy (less than $5 / 4€).   
+1. Optional: [Bosch BME280](https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/) I<sup>2</sup>C sensor module (like the GY-BME280 board), for  air pressure compensation, improves accuracy (less than $5 / 4€).   
 1. Optional: 3V piezo buzzer or simple speaker.
 1. A nice case :)
 
