@@ -4,6 +4,7 @@
 #include <SparkFunBME280.h>
 
 #if defined(ESP32)
+
 #include <SparkFun_SCD30_Arduino_Library.h>
 #include <Tone32.h>
 #include <WiFi.h>
@@ -70,14 +71,19 @@
 // =============================================================================
 
 
-#define LOG_SIZE (((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S)
+#define GRAPH_W 400
+#define GRAPH_H 200
+#define LOG_SIZE GRAPH_W
+
 
 SCD30 scd30;
 uint16_t co2 = 0;
 unsigned long lastMeasureTime = 0;
 bool alarmHasTriggered = false;
-uint16_t co2log[LOG_SIZE] = {0 }; // Ring buffer.
+uint16_t co2log[LOG_SIZE] = {0}; // Ring buffer.
 uint32_t co2logPos = 0; // Current buffer start position.
+uint16_t co2logDownsample = max(1, ((((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S) / LOG_SIZE));
+uint16_t co2avg, co2avgSamples = 0; // Used for downsampling.
 
 BME280 bme280;
 bool bme280isConnected = false;
@@ -127,16 +133,16 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
 
   // Current measurement.
   response->printf(R"(<h1><span style="color:%s">&#9679;</span> %d ppm CO<sub>2</sub></h1>)",
-    co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
+                   co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
 
-  // SVG graph.
-  uint16_t maxVal = 3000;
+  // Generate SVG graph.
+  uint16_t maxVal = CO2_CRITICAL_PPM + (CO2_CRITICAL_PPM - CO2_WARN_PPM);
   for (uint16_t val : co2log) {
     if (val > maxVal) {
       maxVal = val;
     }
   }
-  uint w = 400, h = 200, x, y;
+  uint w = GRAPH_W, h = GRAPH_H, x, y;
   uint16_t val;
   response->printf(R"(<svg width="100%%" height="100%%" viewBox="0 0 %d %d">)", w, h);
   // Background.
@@ -146,7 +152,12 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
                    0, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
   response->printf(R"(<rect style="fill:#AFF49D; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
                    0, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
-  // Line.
+  // Threshold values.
+  response->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">> %d ppm</text>)",
+                   4, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h) - 6, CO2_CRITICAL_PPM);
+  response->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">< %d ppm</text>)",
+                   4, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h) + 12, CO2_WARN_PPM);
+  // Plot line.
   response->print(R"(<path style="fill:none; stroke:black; stroke-width:2px" d=")");
   for (uint32_t i = 0; i < LOG_SIZE; i += (LOG_SIZE / w)) {
     val = co2log[(co2logPos + i) % LOG_SIZE];
@@ -239,9 +250,16 @@ void loop() {
   if (scd30.dataAvailable()) {
     co2 = scd30.getCO2();
   }
-  co2log[co2logPos] = co2;
-  co2logPos++;
-  co2logPos %= LOG_SIZE;
+
+  // Average (downsample) and log CO2 values for the graph.
+  co2avg = ((co2avgSamples * co2avg) + co2) / (co2avgSamples + 1);
+  co2avgSamples++;
+  if (co2avgSamples >= co2logDownsample) {
+    co2log[co2logPos] = co2avg;
+    co2logPos++;
+    co2logPos %= LOG_SIZE;
+    co2avg = co2avgSamples = 0;
+  }
 
   // Print all sensor values.
   Serial.printf(
