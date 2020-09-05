@@ -39,9 +39,9 @@ Most devices will open a captive portal, immediately showing the data. You can a
 1. Any ESP32 or ESP8266 board (like a [WEMOS D32](https://docs.wemos.cc/en/latest/d32/d32.html) (about $18 / 15€) or [WEMOS LOLIN D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html) (about $7 / 6€)).  
 ESP32 has bluetooth, for future expansion.
 1. [Sensirion SCD30](https://www.sensirion.com/en/environmental-sensors/carbon-dioxide-sensors/carbon-dioxide-sensors-co2/) I<sup>2</sup>C carbon dioxide sensor module ([mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==)) (around $50 / 40€).
-1. 1 NeoPixel compatible RGB LED (WS2812B).
+1. 1 [NeoPixel](https://www.adafruit.com/category/168) compatible RGB LED (WS2812B, like the V2 Flora RGB Smart NeoPixel LED, you can also remove one from a larger strip which might be cheaper).
+1. A 3V piezo buzzer or a small speaker.
 1. Optional: [Bosch BME280](https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/) I<sup>2</sup>C sensor module (like the GY-BME280 board), for  air pressure compensation, improves accuracy (less than $5 / 4€).   
-1. Optional: 3V piezo buzzer or simple speaker.
 1. A nice case :)
 
 
