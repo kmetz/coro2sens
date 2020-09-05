@@ -1,8 +1,8 @@
-# CorO<sub>2</sub>Sens
+# CorO₂Sens
 
-Build a simple device that warns if CO<sub>2</sub> concentration in a room becomes a risk for COVID-19 aerosol infections.
+Build a simple device that warns if CO₂ concentration in a room becomes a risk for COVID-19 aerosol infections.
 
-- Measures CO<sub>2</sub> concentration in room air.
+- Measures CO₂ concentration in room air.
 - Controls an RGB LED (green, yellow, red, like a traffic light).
 - A buzzer can be connected that alarms if levels are critical.
 - Also opens a WiFi portal which shows current readings and a graph (not connected to the internet).
@@ -19,7 +19,7 @@ You can also find a good overview of the topic by Rainer Winkler here: [Recommen
  
 
 ## Threshold values
-| LED color                 |CO<sub>2</sub> concentration |
+| LED color                 |CO₂ concentration |
 |:--------------------------|:----------------------------|
 | Green ("all good")        | < 800 ppm                  |
 | Yellow ("open windows")   | 800 – 1000 ppm             |
