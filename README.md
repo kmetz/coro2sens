@@ -57,7 +57,7 @@ ESP32 has bluetooth, for future expansion.
 | GPIO 0 / D3  | LED DIN                                    |
 | GPIO 14 / D5 | Buzzer (+)                                 |
 
-(GPIOs can easily be changed in `src/main.cpp`)
+(GPIOs can easily be changed in `coro2sens.ino`)
 
 
 ### Flashing the ESP using [PlatfomIO](https://platformio.org/)
