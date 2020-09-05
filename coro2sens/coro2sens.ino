@@ -71,8 +71,8 @@
 // =============================================================================
 
 
-#define GRAPH_W 400
-#define GRAPH_H 200
+#define GRAPH_W 360
+#define GRAPH_H 160
 #define LOG_SIZE GRAPH_W
 
 
