@@ -71,8 +71,8 @@
 // =============================================================================
 
 
-#define GRAPH_W 360
-#define GRAPH_H 160
+#define GRAPH_W 600
+#define GRAPH_H 260
 #define LOG_SIZE GRAPH_W
 
 
@@ -157,7 +157,7 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
   response->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">< %d ppm</text>)",
                    4, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h) + 12, CO2_WARN_PPM);
   // Plot line.
-  response->print(R"(<path style="fill:none; stroke:black; stroke-width:2px" d=")");
+  response->print(R"(<path style="fill:none; stroke:black; stroke-width:2px; stroke-linejoin:round" d=")");
   for (uint32_t i = 0; i < LOG_SIZE; i += (LOG_SIZE / w)) {
     val = co2log[(co2logPos + i) % LOG_SIZE];
     x = (int) map(i, 0, LOG_SIZE, 0, w + (w / LOG_SIZE));
