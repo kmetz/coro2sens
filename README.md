@@ -25,7 +25,7 @@ You can also find a good overview of the topic by Rainer Winkler here: [Recommen
 | Red ("leave room")        | \> 1000 ppm                 |
 
 Based on a [Recommendation from the REHVA](https://www.rehva.eu/fileadmin/user_upload/REHVA_COVID-19_guidance_document_V3_03082020.pdf)
-(Federation of European Heating, Ventilation and Air Conditioning associations, [rehva.eu](https://www.rehva.eu/).
+(Federation of European Heating, Ventilation and Air Conditioning associations, [rehva.eu](https://www.rehva.eu/))
 for preventing COVID-19 aerosol spread, especially in schools. 
 
 
