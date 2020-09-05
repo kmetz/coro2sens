@@ -1,6 +1,6 @@
 # CorO<sub>2</sub>Sens
 
-Build a simple device that warns if CO<sub>2</sub> concentration in a room becomes a risk for Covid-19 aerosol infections.
+Build a simple device that warns if CO<sub>2</sub> concentration in a room becomes a risk for COVID-19 aerosol infections.
 
 - Measures CO<sub>2</sub> concentration in room air.
 - Controls an RGB LED (green, yellow, red, like a traffic light).
