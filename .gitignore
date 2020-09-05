@@ -1,3 +1,4 @@
 .pio
+CMakeLists.txt
 CMakeListsPrivate.txt
-cmake-build-*/ 
+cmake-build-*/
