@@ -2,3 +2,8 @@
 CMakeLists.txt
 CMakeListsPrivate.txt
 cmake-build-*/
+
+# Currently not used:
+include/
+lib/
+test/
