@@ -59,13 +59,16 @@ ESP32 has bluetooth, for future expansion.
 (GPIOs can easily be changed in `src/main.cpp`)
 
 
-### Flashing the ESP using PlatfomIO
+### Flashing the ESP using [PlatfomIO](https://platformio.org/)
 - Simply open the project, select your env (ESP8266 / ESP32) and run / upload.
 - Or via command line:
-  - `platformio run -t -e esp21e upload` for ESP8266.
-  - `platformio run -t -e esp32dev upload` for ESP32.
-
+  - `pio run -t -e esp21e upload` for ESP8266.
+  - `pio run -t -e esp32dev upload` for ESP32.
+- Libraries will be installed automatically.
+  
 ### Flash using the Arduino IDE
+- Install [the latest Arduino IDE](https://www.arduino.cc/en/main/software).
+- [Download the latest code](https://github.com/kmetz/coro2sens/archive/master.zip) and unzip it somewhere.
 - Open `coro2sense.ino` in the `coro2sens` sub folder in your Arduino IDE.
 - Install (or update) your board platform  
   (*Tools –> Board –> Board Manager...*):
