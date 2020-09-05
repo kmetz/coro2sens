@@ -208,7 +208,7 @@ void setup() {
 
   // Initialize WiFi, DNS and web server.
   if (WIFI_PORTAL_ENABLED) {
-    WiFiClass::mode(WIFI_AP);
+    WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(apIP, apIP, netMsk);
     WiFi.softAP(WIFI_AP_NAME);
     dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
