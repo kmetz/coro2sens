@@ -6,6 +6,7 @@ Build a simple device that warns if CO<sub>2</sub> concentration in a room becom
 - Controls an RGB LED (green, yellow, red, like a traffic light).
 - A buzzer can be connected that alarms if levels are critical.
 - Also opens a WiFi portal which shows current readings and a graph (not connected to the internet).
+- Can be built for ~ $60 / 50€ (parts cost).
 
 This project was heavily inspired by [ideas from Umwelt-Campus Birkenfeld](https://www.umwelt-campus.de/forschung/projekte/iot-werkstatt/ideen-zur-corona-krise).
 
