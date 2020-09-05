@@ -58,8 +58,8 @@
 #define MEASURE_INTERVAL_S 2
 
 // WiFi captive portal showing sensor values.
-// Set to false to disable.
-#define WIFI_PORTAL_ENABLED true
+// Set to 0 to disable.
+#define WIFI_PORTAL_ENABLED 1
 #define WIFI_AP_NAME "coro2sens"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
