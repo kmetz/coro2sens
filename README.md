@@ -60,11 +60,33 @@ Most devices will open a captive portal, immediately showing the data. You can a
 
 
 ### Flashing the ESP using PlatfomIO
-- Simply open the project and upload.
-- Or via command line: `platformio run -t upload`
+- Simply open the project, select your env (ESP8266 / ESP32) and run / upload.
+- Or via command line:
+  - `platformio run -t -e esp21e upload` for ESP8266.
+  - `platformio run -t -e esp32dev upload` for ESP32.
 
 ### Flash using the Arduino IDE
-- Rename `src/main.cpp` to `coro2sense.ino` and place it in a folder named `coro2sense`.
-- Open `coro2sense.ino` in the Arduino IDE.
-- Install all libraries mentioned in `platformio.ini` (the `lib_deps` section) using the library manager.
-- Upload (hope it works).
+- Open `coro2sense.ino` in the `coro2sens` sub folder in your Arduino IDE.
+- Install (or update) your board platform (*Tools –> Board –> Board Manager...*):
+  - Install `esp8266` or `esp32`.
+- Install (or update) the following libraries using the built-in library manager (*Tools –> Library Manager...*)
+  - **For ESP8266:**
+    - `SparkFun BME280`
+    - `Adafruit NeoPixel`
+  - **For ESP32:**
+    - `SparkFun SCD30 Arduino Library`
+    - `SparkFun BME280`
+    - `Adafruit NeoPixel`
+- Install the following external libraries (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*):
+  - **For ESP8266:**
+    - [paulvha/scd30](https://github.com/paulvha/scd30) ([.zip](https://github.com/paulvha/scd30/archive/master.zip))
+    - [me-no-dev/ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) ([.zip](https://github.com/me-no-dev/ESPAsyncTCP/archive/master.zip))
+    - [me-no-dev/ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) ([.zip](https://github.com/me-no-dev/ESPAsyncWebServer/archive/master.zip))
+  - **For ESP32:**
+    - [lbernstone/Tone32](https://github.com/lbernstone/Tone32) ([.zip](https://github.com/lbernstone/Tone32/archive/master.zip))
+    - [me-no-dev/AsyncTCP](https://github.com/me-no-dev/AsyncTCP) ([.zip](https://github.com/me-no-dev/AsyncTCP/archive/master.zip))
+    - [me-no-dev/ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) ([.zip](https://github.com/me-no-dev/ESPAsyncWebServer/archive/master.zip))
+- Run & upload :)
+
+
+Please let me know of any issues you might encounter ([open a GitHub issue](https://github.com/kmetz/coro2sens/issues/new/choose) or write me on [twitter.com/kmetz](https://twitter.com/kmetz) or k@kjpm.de).
