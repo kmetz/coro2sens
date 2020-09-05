@@ -67,22 +67,24 @@ ESP32 has bluetooth, for future expansion.
 
 ### Flash using the Arduino IDE
 - Open `coro2sense.ino` in the `coro2sens` sub folder in your Arduino IDE.
-- Install (or update) your board platform (*Tools –> Board –> Board Manager...*):
+- Install (or update) your board platform  
+  (*Tools –> Board –> Board Manager...*):
   - Install `esp8266` or `esp32`.
 - Install (or update) the following libraries using the built-in library manager (*Tools –> Library Manager...*)
-  - **For ESP8266:**
+  - For ESP8266:
     - `SparkFun BME280`
     - `Adafruit NeoPixel`
-  - **For ESP32:**
+  - For ESP32:
     - `SparkFun SCD30 Arduino Library`
     - `SparkFun BME280`
     - `Adafruit NeoPixel`
-- Install the following external libraries (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*):
-  - **For ESP8266:**
+- Install the following external libraries  
+  (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*):
+  - For ESP8266:
     - [paulvha/scd30](https://github.com/paulvha/scd30) ([.zip](https://github.com/paulvha/scd30/archive/master.zip))
     - [me-no-dev/ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) ([.zip](https://github.com/me-no-dev/ESPAsyncTCP/archive/master.zip))
     - [me-no-dev/ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) ([.zip](https://github.com/me-no-dev/ESPAsyncWebServer/archive/master.zip))
-  - **For ESP32:**
+  - For ESP32:
     - [lbernstone/Tone32](https://github.com/lbernstone/Tone32) ([.zip](https://github.com/lbernstone/Tone32/archive/master.zip))
     - [me-no-dev/AsyncTCP](https://github.com/me-no-dev/AsyncTCP) ([.zip](https://github.com/me-no-dev/AsyncTCP/archive/master.zip))
     - [me-no-dev/ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) ([.zip](https://github.com/me-no-dev/ESPAsyncWebServer/archive/master.zip))
