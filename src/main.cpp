@@ -25,11 +25,17 @@
 
 // CO2 Thresholds (ppm).
 //
+// Recommendation from REHVA (Federation of European Heating, Ventilation and Air Conditioning associations, rehva.eu)
+// for preventing COVID-19 aerosol spread especially in schools:
+// - warn: 800, critical: 1000
+// (https://www.rehva.eu/fileadmin/user_upload/REHVA_COVID-19_guidance_document_V3_03082020.pdf)
+//
 // General air quality recommendation by the German Federal Environmental Agency (2008):
 // - warn: 1000, critical: 2000
 // (https://www.umweltbundesamt.de/sites/default/files/medien/pdfs/kohlendioxid_2008.pdf)
-#define CO2_WARN_PPM 1000
-#define CO2_CRITICAL_PPM 2000
+//
+#define CO2_WARN_PPM 800
+#define CO2_CRITICAL_PPM 1000
 
 // LED warning light (always on, green / yellow / red).
 #define LED_PIN 0
