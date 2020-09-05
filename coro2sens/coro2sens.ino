@@ -3,18 +3,17 @@
 #include <Adafruit_NeoPixel.h>
 #include <SparkFunBME280.h>
 
-#ifdef ESP32
+#if defined(ESP32)
 #include <SparkFun_SCD30_Arduino_Library.h>
 #include <Tone32.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#else
 
+#elif defined(ESP8266)
 #include <paulvha_SCD30.h>
 #include <ESP8266WiFi.h>
 #include <ESPAsyncTCP.h>
-
 #endif
 
 #include <ESPAsyncWebServer.h>
