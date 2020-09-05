@@ -42,7 +42,7 @@ ESP32 has bluetooth, for future expansion.
 1. 1 [NeoPixel](https://www.adafruit.com/category/168) compatible RGB LED (WS2812B, like the V2 Flora RGB Smart NeoPixel LED, you can also remove one from a larger strip which might be cheaper).
 1. A 3V piezo buzzer or a small speaker.
 1. Optional: [Bosch BME280](https://www.bosch-sensortec.com/products/environmental-sensors/humidity-sensors-bme280/) I<sup>2</sup>C sensor module (like the GY-BME280 board), for  air pressure compensation, improves accuracy (less than $5 / 4€).   
-1. A nice case :)
+1. A nice case :) Make shure the sensor has enough air flow.
 
 
 ### Wiring
