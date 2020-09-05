@@ -112,7 +112,6 @@ void alarmOnce() {
  */
 void alarmContinuous() {
   tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS);
-  digitalWrite(LED_PIN, LOW);
 }
 
 
