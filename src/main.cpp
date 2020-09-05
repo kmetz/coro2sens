@@ -23,10 +23,15 @@
 
 // SETUP -----------------------------------------
 
-// LED (always on).
-// - Green: all good (CO2 level < 1000 ppm).
-// - Yellow: warning, open windows (> 1000 ppm).
-// - Red: critical, leave room (> 2000 ppm).
+// CO2 Thresholds (ppm).
+//
+// General air quality recommendation by the German Federal Environmental Agency (2008):
+// - warn: 1000, critical: 2000
+// (https://www.umweltbundesamt.de/sites/default/files/medien/pdfs/kohlendioxid_2008.pdf)
+#define CO2_WARN_PPM 1000
+#define CO2_CRITICAL_PPM 2000
+
+// LED warning light (always on, green / yellow / red).
 #define LED_PIN 0
 #define LED_BRIGHTNESS 37
 
@@ -115,7 +120,7 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
 
   // Current measurement.
   response->printf(R"(<h1><span style="color:%s">&#9679;</span> %d ppm CO<sub>2</sub></h1>)",
-    co2 > 2000 ? "red" : co2 > 1000 ? "yellow" : "green", co2);
+    co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
 
   // SVG graph.
   uint16_t maxVal = 3000;
@@ -129,11 +134,11 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
   response->printf(R"(<svg width="100%%" height="100%%" viewBox="0 0 %d %d">)", w, h);
   // Background.
   response->printf(R"(<rect style="fill:#FFC1B0; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
-                   0, 0, w, (int) map(maxVal - 2000, 0, maxVal, 0, h));
+                   0, 0, w, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h));
   response->printf(R"(<rect style="fill:#FFFCB3; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
-                   0, (int) map(maxVal - 2000, 0, maxVal, 0, h), w, (int) map(1000, 0, maxVal, 0, h));
+                   0, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
   response->printf(R"(<rect style="fill:#AFF49D; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
-                   0, (int) map(maxVal - 1000, 0, maxVal, 0, h), w, (int) map(1000, 0, maxVal, 0, h));
+                   0, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
   // Line.
   response->print(R"(<path style="fill:none; stroke:black; stroke-width:2px" d=")");
   for (uint32_t i = 0; i < LOG_SIZE; i += (LOG_SIZE / w)) {
@@ -241,10 +246,10 @@ void loop() {
   Serial.println("-----------------------------------------------------");
 
   // Update LED.
-  if (co2 < 1000) {
+  if (co2 < CO2_WARN_PPM) {
     led.setPixelColor(0, 0, 255, 0); // Green.
   }
-  else if (co2 < 2000) {
+  else if (co2 < CO2_CRITICAL_PPM) {
     led.setPixelColor(0, 255, 255, 0); // Yellow.
   }
   else {
@@ -253,14 +258,14 @@ void loop() {
   led.show();
 
   // Trigger alarms.
-  if (co2 >= 2000) {
+  if (co2 >= CO2_CRITICAL_PPM) {
     alarmContinuous();
     if (!alarmHasTriggered) {
       alarmOnce();
       alarmHasTriggered = true;
     }
   }
-  if (co2 < 2000 && alarmHasTriggered) {
+  if (co2 < CO2_CRITICAL_PPM && alarmHasTriggered) {
     alarmHasTriggered = false;
   }
 
