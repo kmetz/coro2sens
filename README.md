@@ -34,8 +34,6 @@ You can read current levels and a simple graph for the last hour by connecting t
 Most devices will open a captive portal, immediately showing the data. You can also open `http://10.0.0.1/` in a browser.
 
 
-# Build Your Own
-
 ## You need
 1. Any ESP32 or ESP8266 board (like a [WEMOS D32](https://docs.wemos.cc/en/latest/d32/d32.html) (about $18 / 15€) or [WEMOS LOLIN D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html) (about $7 / 6€)).  
 ESP32 has bluetooth, for future expansion.
