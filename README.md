@@ -70,8 +70,8 @@ ESP32 has bluetooth, for future expansion.
 - Install [the latest Arduino IDE](https://www.arduino.cc/en/main/software).
 - [Download the latest code](https://github.com/kmetz/coro2sens/archive/master.zip) and unzip it somewhere.
 - Open `coro2sense.ino` in the `coro2sens` sub folder in your Arduino IDE.
-- Install (or update) your board platform  
-  (*Tools –> Board –> Board Manager...*):
+- Install (or update) your board platform:  
+  (*Tools –> Board –> Board Manager...*)
   - Install `esp8266` or `esp32`.
 - Install (or update) the following libraries using the built-in library manager (*Tools –> Library Manager...*)
   - For ESP8266:
@@ -81,8 +81,8 @@ ESP32 has bluetooth, for future expansion.
     - `SparkFun SCD30 Arduino Library`
     - `SparkFun BME280`
     - `Adafruit NeoPixel`
-- Install the following external libraries  
-  (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*):
+- Install the following external libraries:  
+  (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*)
   - For ESP8266:
     - [paulvha/scd30](https://github.com/paulvha/scd30) ([.zip](https://github.com/paulvha/scd30/archive/master.zip))
     - [me-no-dev/ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) ([.zip](https://github.com/me-no-dev/ESPAsyncTCP/archive/master.zip))
