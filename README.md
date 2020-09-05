@@ -35,8 +35,7 @@ Most devices will open a captive portal, immediately showing the data. You can a
 
 
 ## You need
-1. Any ESP32 or ESP8266 board (like a [WEMOS D32](https://docs.wemos.cc/en/latest/d32/d32.html) (about $18 / 15€) or [WEMOS LOLIN D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html) (about $7 / 6€)).
-  - ESP32 has bluetooth, for future expansion.
+1. Any ESP32 or ESP8266 board (like a [WEMOS D32](https://docs.wemos.cc/en/latest/d32/d32.html) (about $18 / 15€) or [WEMOS LOLIN D1 Mini](https://docs.wemos.cc/en/latest/d1/d1_mini.html) (about $7 / 6€)). ESP32 has bluetooth, for future expansion.
 1. [Sensirion SCD30](https://www.sensirion.com/en/environmental-sensors/carbon-dioxide-sensors/carbon-dioxide-sensors-co2/) carbon dioxide sensor module ([mouser.com](https://mouser.com/ProductDetail/Sensirion/SCD30?qs=rrS6PyfT74fdywu4FxpYjQ==)) (around $50 / 40€).
 1. 1 NeoPixel compatible RGB LED (WS2812B).
 1. Optional: BME280 I<sup>2</sup>C pressure sensor module, improves accuracy (less than $5 / 4€).   
