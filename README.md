@@ -12,6 +12,8 @@ This project was heavily inspired by [ideas from Umwelt-Campus Birkenfeld](https
 
 You can also find a good overview of the topic by Rainer Winkler here: [Recommendations for use of CO2 sensors to control room air quality during the COVID-19 pandemic](https://medium.com/@rainer.winkler.poaceae/recommendations-for-use-of-co2-sensors-to-control-room-air-quality-during-the-covid-19-pandemic-c04cac6644d0).
 
+![coro2sens overview](coro2sens.jpeg)
+
 
 ## Sensors
 - The sensor used here is the Sensirion SCD30 (around $50 / 40€) which is optionally augmented by a BME280 pressure sensor to improve accuracy.
@@ -97,4 +99,3 @@ ESP32 has bluetooth, for future expansion.
 
 Please let me know of any issues you might encounter ([open a GitHub issue](https://github.com/kmetz/coro2sens/issues/new/choose) or write me on [twitter.com/kmetz](https://twitter.com/kmetz) or k@kjpm.de).
 
-![coro2sens overview](coro2sens.jpeg)
