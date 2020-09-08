@@ -63,7 +63,7 @@ ESP32 has bluetooth, for future expansion.
 
 
 ### Flashing the ESP using [PlatfomIO](https://platformio.org/)
-- Simply open the project, select your env (ESP8266 / ESP32) and run / upload.
+- Simply open the project, select your env (`esp12e` for ESP8266 / `esp32dev` ESP32) and run / upload.
 - Or via command line:
   - `pio run -t -e esp12e upload` for ESP8266.
   - `pio run -t -e esp32dev upload` for ESP32.
