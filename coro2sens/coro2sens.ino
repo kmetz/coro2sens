@@ -58,13 +58,23 @@
 // Can range from 2 to 1800.
 #define MEASURE_INTERVAL_S 2
 
-// WiFi captive portal showing sensor values.
-// Set to 0 to disable.
-#define WIFI_PORTAL_ENABLED 1
-#define WIFI_AP_NAME "coro2sens"
+// WiFi
+// Set to 0 to disable altogether.
+#define WIFI_ENABLED 1
+
+// 1 = captive portal hotspot without internet connection, showing data when you connect with it.
+// 0 = WiFi client, showing data when accessed via IP address.
+#define WIFI_HOTSPOT_MODE 1
+
+// AP name when WIFI_HOTSPOT_MODE is 1
+#define WIFI_HOTSPOT_NAME "coro2sens"
+
+// Credentials when WIFI_HOTSPOT_MODE is 0
+#define WIFI_CLIENT_SSID "your ssid"
+#define WIFI_CLIENT_PASSWORD "*****"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
-#define LOG_MINUTES 60
+#define LOG_MINUTES 1
 // Label describing the time axis.
 #define TIME_LABEL "1 hour"
 
@@ -91,11 +101,12 @@ uint16_t pressure = 0;
 
 Adafruit_NeoPixel led = Adafruit_NeoPixel(1, LED_PIN, NEO_GRB + NEO_KHZ800);
 
+#if WIFI_ENABLED
 AsyncWebServer server(80);
 IPAddress apIP(10, 0, 0, 1);
 IPAddress netMsk(255, 255, 255, 0);
 DNSServer dnsServer;
-
+#endif
 
 /**
  * Triggered once when the CO2 level goes critical.
@@ -216,25 +227,43 @@ void setup() {
     Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
   }
 
+#if WIFI_ENABLED
   // Initialize WiFi, DNS and web server.
-  if (WIFI_PORTAL_ENABLED) {
-    WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(apIP, apIP, netMsk);
-    WiFi.softAP(WIFI_AP_NAME);
-    dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-    dnsServer.start(53, "*", apIP);
-    server.on("/", HTTP_GET, handleCaptivePortal);
-    server.onNotFound(handleCaptivePortal);
-    server.begin();
+#if WIFI_HOTSPOT_MODE
+  Serial.println("Starting WiFi hotspot ...");
+  WiFi.mode(WIFI_AP);
+  WiFi.softAPConfig(apIP, apIP, netMsk);
+  WiFi.softAP(WIFI_HOTSPOT_NAME);
+  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+  dnsServer.start(53, "*", apIP);
+  Serial.printf("WiFi hotspot started (\"%s\")\r\n", WIFI_HOTSPOT_NAME);
+#else
+  Serial.println("Connecting WiFi ...");
+  WiFi.begin(WIFI_CLIENT_SSID, WIFI_CLIENT_PASSWORD);
+  uint timeout = 30;
+  while (timeout > 0 && WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    timeout--;
   }
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.printf("WiFi connected (%s).\r\n", WiFi.localIP().toString().c_str());
+  }
+  else {
+    Serial.println("WiFi connection failed.");
+  };
+#endif
+  server.on("/", HTTP_GET, handleCaptivePortal);
+  server.onNotFound(handleCaptivePortal);
+  server.begin();
+#endif
 }
 
 
 void loop() {
   // Tasks that need to run continuously.
-  if (WIFI_PORTAL_ENABLED) {
-    dnsServer.processNextRequest();
-  }
+#if WIFI_ENABLED && WIFI_HOTSPOT_MODE
+  dnsServer.processNextRequest();
+#endif
 
   // Early exit.
   if ((millis() - lastMeasureTime) < (MEASURE_INTERVAL_S * 1000)) {
