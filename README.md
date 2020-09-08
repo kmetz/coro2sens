@@ -76,7 +76,7 @@ ESP32 has bluetooth, for future expansion.
 - Install (or update) your board platform:  
   (*Tools –> Board –> Board Manager...*)
   - Install `esp8266` or `esp32`.
-- Install (or update) the following libraries using the built-in library manager  
+- Install (or update) the following libraries using the built-in library manager:  
   (*Tools –> Library Manager...*)
   - For ESP8266:
     - `SparkFun BME280`
