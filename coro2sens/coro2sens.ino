@@ -68,21 +68,28 @@
 #include <Adafruit_NeoPixel.h>
 #include <SparkFunBME280.h>
 
+
 #if defined(ESP32)
-#include <SparkFun_SCD30_Arduino_Library.h>
-#include <Tone32.h>
-#include <WiFi.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
+  #include <SparkFun_SCD30_Arduino_Library.h>
+  #include <Tone32.h>
+  #if WIFI_ENABLED
+    #include <WiFi.h>
+    #include <AsyncTCP.h>
+    #include <ESPAsyncWebServer.h>
+  #endif
 
 #elif defined(ESP8266)
-#include <paulvha_SCD30.h>
-#include <ESP8266WiFi.h>
-#include <ESPAsyncTCP.h>
+  #include <paulvha_SCD30.h>
+  #if WIFI_ENABLED
+    #include <ESP8266WiFi.h>
+    #include <ESPAsyncTCP.h>
+  #endif
 #endif
 
-#include <ESPAsyncWebServer.h>
-#include <DNSServer.h>
+#if WIFI_ENABLED
+  #include <ESPAsyncWebServer.h>
+  #include <DNSServer.h>
+#endif
 
 
 SCD30 scd30;
@@ -107,6 +114,10 @@ IPAddress netMsk(255, 255, 255, 0);
 DNSServer dnsServer;
 #endif
 
+
+void handleCaptivePortal(AsyncWebServerRequest *request);
+
+
 /**
  * Triggered once when the CO2 level goes critical.
  */
@@ -122,66 +133,6 @@ void alarmOnce() {
  */
 void alarmContinuous() {
   tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS);
-}
-
-
-/**
- * Handle requests for the captive portal.
- * @param request
- */
-void handleCaptivePortal(AsyncWebServerRequest *request) {
-  Serial.println("handleCaptivePortal");
-  AsyncResponseStream *response = request->beginResponseStream("text/html");
-
-  response->print("<!DOCTYPE html><html><head>");
-  response->print("<title>coro2sens</title>");
-  response->print(R"(<meta content="width=device-width,initial-scale=1" name="viewport">)");
-  response->printf(R"(<meta http-equiv="refresh" content="%d">)", max(MEASURE_INTERVAL_S, 10));
-  response->print(R"(<style type="text/css">* { font-family:sans-serif }</style>)");
-  response->print("</head><body>");
-
-  // Current measurement.
-  response->printf(R"(<h1><span style="color:%s">&#9679;</span> %d ppm CO<sub>2</sub></h1>)",
-                   co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
-
-  // Generate SVG graph.
-  uint16_t maxVal = CO2_CRITICAL_PPM + (CO2_CRITICAL_PPM - CO2_WARN_PPM);
-  for (uint16_t val : co2log) {
-    if (val > maxVal) {
-      maxVal = val;
-    }
-  }
-  uint w = GRAPH_W, h = GRAPH_H, x, y;
-  uint16_t val;
-  response->printf(R"(<svg width="100%%" height="100%%" viewBox="0 0 %d %d">)", w, h);
-  // Background.
-  response->printf(R"(<rect style="fill:#FFC1B0; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
-                   0, 0, w, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h));
-  response->printf(R"(<rect style="fill:#FFFCB3; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
-                   0, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
-  response->printf(R"(<rect style="fill:#AFF49D; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
-                   0, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
-  // Threshold values.
-  response->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">> %d ppm</text>)",
-                   4, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h) - 6, CO2_CRITICAL_PPM);
-  response->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">< %d ppm</text>)",
-                   4, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h) + 12, CO2_WARN_PPM);
-  // Plot line.
-  response->print(R"(<path style="fill:none; stroke:black; stroke-width:2px; stroke-linejoin:round" d=")");
-  for (uint32_t i = 0; i < LOG_SIZE; i += (LOG_SIZE / w)) {
-    val = co2log[(co2logPos + i) % LOG_SIZE];
-    x = (int) map(i, 0, LOG_SIZE, 0, w + (w / LOG_SIZE));
-    y = h - (int) map(val, 0, maxVal, 0, h);
-    response->printf("%s%d,%d", i == 0 ? "M" : "L", x, y);
-  }
-  response->print(R"("/>)");
-  response->print("</svg>");
-
-  // Labels.
-  response->printf("<p>%s</p>", TIME_LABEL);
-
-  response->print("</body></html>");
-  request->send(response);
 }
 
 
@@ -326,4 +277,64 @@ void loop() {
   }
 
   lastMeasureTime = millis();
+}
+
+
+/**
+ * Handle requests for the captive portal.
+ * @param request
+ */
+void handleCaptivePortal(AsyncWebServerRequest *request) {
+  Serial.println("handleCaptivePortal");
+  AsyncResponseStream *res = request->beginResponseStream("text/html");
+
+  res->print("<!DOCTYPE html><html><head>");
+  res->print("<title>coro2sens</title>");
+  res->print(R"(<meta content="width=device-width,initial-scale=1" name="viewport">)");
+  res->printf(R"(<meta http-equiv="refresh" content="%d">)", max(MEASURE_INTERVAL_S, 10));
+  res->print(R"(<style type="text/css">* { font-family:sans-serif }</style>)");
+  res->print("</head><body>");
+
+  // Current measurement.
+  res->printf(R"(<h1><span style="color:%s">&#9679;</span> %d ppm CO<sub>2</sub></h1>)",
+                   co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
+
+  // Generate SVG graph.
+  uint16_t maxVal = CO2_CRITICAL_PPM + (CO2_CRITICAL_PPM - CO2_WARN_PPM);
+  for (uint16_t val : co2log) {
+    if (val > maxVal) {
+      maxVal = val;
+    }
+  }
+  uint w = GRAPH_W, h = GRAPH_H, x, y;
+  uint16_t val;
+  res->printf(R"(<svg width="100%%" height="100%%" viewBox="0 0 %d %d">)", w, h);
+  // Background.
+  res->printf(R"(<rect style="fill:#FFC1B0; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
+              0, 0, w, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h));
+  res->printf(R"(<rect style="fill:#FFFCB3; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
+              0, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
+  res->printf(R"(<rect style="fill:#AFF49D; stroke:none" x="%d" y="%d" width="%d" height="%d"/>)",
+              0, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h), w, (int) map(CO2_WARN_PPM, 0, maxVal, 0, h));
+  // Threshold values.
+  res->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">> %d ppm</text>)",
+              4, (int) map(maxVal - CO2_CRITICAL_PPM, 0, maxVal, 0, h) - 6, CO2_CRITICAL_PPM);
+  res->printf(R"(<text style="color:black; font-size:10px" x="%d" y="%d">< %d ppm</text>)",
+              4, (int) map(maxVal - CO2_WARN_PPM, 0, maxVal, 0, h) + 12, CO2_WARN_PPM);
+  // Plot line.
+  res->print(R"(<path style="fill:none; stroke:black; stroke-width:2px; stroke-linejoin:round" d=")");
+  for (uint32_t i = 0; i < LOG_SIZE; i += (LOG_SIZE / w)) {
+    val = co2log[(co2logPos + i) % LOG_SIZE];
+    x = (int) map(i, 0, LOG_SIZE, 0, w + (w / LOG_SIZE));
+    y = h - (int) map(val, 0, maxVal, 0, h);
+    res->printf("%s%d,%d", i == 0 ? "M" : "L", x, y);
+  }
+  res->print(R"("/>)");
+  res->print("</svg>");
+
+  // Labels.
+  res->printf("<p>%s</p>", TIME_LABEL);
+
+  res->print("</body></html>");
+  request->send(res);
 }
