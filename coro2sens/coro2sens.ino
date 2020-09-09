@@ -1,26 +1,3 @@
-#include <Arduino.h>
-#include <Wire.h>
-#include <Adafruit_NeoPixel.h>
-#include <SparkFunBME280.h>
-
-#if defined(ESP32)
-
-#include <SparkFun_SCD30_Arduino_Library.h>
-#include <Tone32.h>
-#include <WiFi.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-
-#elif defined(ESP8266)
-#include <paulvha_SCD30.h>
-#include <ESP8266WiFi.h>
-#include <ESPAsyncTCP.h>
-#endif
-
-#include <ESPAsyncWebServer.h>
-#include <DNSServer.h>
-
-
 // SETUP =======================================================================
 
 // CO2 Thresholds (ppm).
@@ -39,11 +16,11 @@
 
 // LED warning light (always on, green / yellow / red).
 #define LED_PIN 0
-#define LED_BRIGHTNESS 37
+#define LED_BRIGHTNESS 42 // 0-255
 
 // Buzzer, activated continuously when CO2 level is critical.
 #define BUZZER_PIN 14
-#define BEEP_DURATION_MS 100
+#define BEEP_DURATION_MS 100 // Beep milliseconds
 #define BEEP_TONE 1047 // C6
 
 // Switch, is pulled HIGH once for SWITCH_DURATION_MS when CO2 level becomes critical.
@@ -55,7 +32,7 @@
 #define BME280_I2C_ADDRESS 0x76
 
 // Update CO2 level every MEASURE_INTERVAL_S seconds.
-// Can range from 2 to 1800.
+// Should be kept at 2 unless you want to save power.
 #define MEASURE_INTERVAL_S 2
 
 // WiFi
@@ -70,7 +47,7 @@
 #define WIFI_HOTSPOT_NAME "coro2sens"
 
 // Credentials when WIFI_HOTSPOT_MODE is 0
-#define WIFI_CLIENT_SSID "your ssid"
+#define WIFI_CLIENT_SSID "your WiFi name"
 #define WIFI_CLIENT_PASSWORD "*****"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
@@ -84,6 +61,28 @@
 #define GRAPH_W 600
 #define GRAPH_H 260
 #define LOG_SIZE GRAPH_W
+
+
+#include <Arduino.h>
+#include <Wire.h>
+#include <Adafruit_NeoPixel.h>
+#include <SparkFunBME280.h>
+
+#if defined(ESP32)
+#include <SparkFun_SCD30_Arduino_Library.h>
+#include <Tone32.h>
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+
+#elif defined(ESP8266)
+#include <paulvha_SCD30.h>
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#endif
+
+#include <ESPAsyncWebServer.h>
+#include <DNSServer.h>
 
 
 SCD30 scd30;
