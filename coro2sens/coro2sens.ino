@@ -112,10 +112,8 @@ AsyncWebServer server(80);
 IPAddress apIP(10, 0, 0, 1);
 IPAddress netMsk(255, 255, 255, 0);
 DNSServer dnsServer;
-#endif
-
-
 void handleCaptivePortal(AsyncWebServerRequest *request);
+#endif
 
 
 /**
@@ -280,6 +278,7 @@ void loop() {
 }
 
 
+#if WIFI_ENABLED
 /**
  * Handle requests for the captive portal.
  * @param request
@@ -338,3 +337,4 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
   res->print("</body></html>");
   request->send(res);
 }
+#endif
