@@ -130,7 +130,13 @@ void alarmOnce() {
  * Triggered continuously when the CO2 level is critical.
  */
 void alarmContinuous() {
+#if defined(ESP32)
+  // Use Tone32.
+  tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS, 0);
+#else
+  // Use Arduino tone().
   tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS);
+#endif
 }
 
 
@@ -146,6 +152,9 @@ void setup() {
   led.setBrightness(LED_BRIGHTNESS);
   led.setPixelColor(0, 0, 0, 0);
   led.show();
+
+  // Initialize buzzer.
+  pinMode(BUZZER_PIN, OUTPUT);
 
   // Initialize SCD30 sensor.
   Wire.begin();
