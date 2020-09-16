@@ -63,6 +63,9 @@
 // Label describing the time axis.
 #define TIME_LABEL "1 hour"
 
+// Activity indicator LED (use the built-in LED if your board has one).
+//#define ACTIVITY_LED_PIN 5
+
 // =============================================================================
 
 
@@ -149,7 +152,10 @@ void setup() {
 
   // Initialize pins.
   pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(SWITCH_PIN, OUTPUT);
+#if defined(ACTIVITY_LED_PIN)
+  pinMode(ACTIVITY_LED_PIN, OUTPUT);
+  digitalWrite(ACTIVITY_LED_PIN, HIGH);
+#endif
 
   // Initialize LED(s).
   FastLED.addLeds<LED_CHIPSET, LED_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
@@ -231,6 +237,10 @@ void loop() {
     return;
   }
 
+#if defined(ACTIVITY_LED_PIN)
+  digitalWrite(ACTIVITY_LED_PIN, LOW);
+#endif
+
   // Read sensors.
   if (bme280isConnected) {
     pressure = (uint16_t) (bme280.readFloatPressure() / 100);
@@ -285,6 +295,10 @@ void loop() {
   if (co2 < CO2_CRITICAL_PPM && alarmHasTriggered) {
     alarmHasTriggered = false;
   }
+
+#if defined(ACTIVITY_LED_PIN)
+  digitalWrite(ACTIVITY_LED_PIN, HIGH);
+#endif
 
   lastMeasureTime = millis();
 }
