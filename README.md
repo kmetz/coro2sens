@@ -49,17 +49,15 @@ ESP32 has bluetooth, for future expansion.
 
 ### Wiring
 
-| ESP pin      | goes to                                    |
-|:-------------|:-------------------------------------------|
-| 3V3          | SCD30 VIN, BME280 VIN                      |
-| 5V           | LED +5V                                    |
-| GND          | SCD30 GND, BME280 GND, LED GND, Buzzer (-) |
-| SCL / D1     | SCD30 SCL, BME280 SCL                      |
-| SDA / D2     | SCD30 SDA, BME280 SDA                      |
-| GPIO 0 / D3  | LED DIN                                    |
-| GPIO 14 / D5 | Buzzer (+)                                 |
-
-(GPIOs can easily be changed in `coro2sens.ino`)
+| ESP8266 pin  | ESP32 pin     | goes to                                    |
+|:-------------|:--------------|:-------------------------------------------|
+| 3V3          | 3V3           | SCD30 VIN, BME280 VIN                      |
+| 5V           | 5V            | LED +5V                                    |
+| GND          | GND           | SCD30 GND, BME280 GND, LED GND, Buzzer (-) |
+| SCL / D1     | SCL / GPIO 22 | SCD30 SCL, BME280 SCL                      |
+| SDA / D2     | SDA / GPIO 21 | SCD30 SDA, BME280 SDA                      |
+| GPIO 0 / D3  | GPIO 16       | LED DIN                                    |
+| GPIO 14 / D5 | GPIO 19       | Buzzer (+)                                 |
 
 
 ### Flashing the ESP using [PlatfomIO](https://platformio.org/)
@@ -80,11 +78,11 @@ ESP32 has bluetooth, for future expansion.
   (*Tools –> Library Manager...*)
   - For ESP8266:
     - `SparkFun BME280`
-    - `Adafruit NeoPixel`
+    - `FastLED`
   - For ESP32:
     - `SparkFun SCD30 Arduino Library`
     - `SparkFun BME280`
-    - `Adafruit NeoPixel`
+    - `FastLED`
 - Install the following external libraries:  
   (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*)
   - For ESP8266:

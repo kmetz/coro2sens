@@ -15,17 +15,25 @@
 #define CO2_CRITICAL_PPM 1000
 
 // LED warning light (always on, green / yellow / red).
-#define LED_PIN 0
+#if defined(ESP32)
+  #define LED_PIN 16
+#elif defined(ESP8266)
+  #define LED_PIN D3
+#endif
+#define LED_CHIPSET WS2812B
+#define LED_COLOR_ORDER GRB
 #define LED_BRIGHTNESS 42 // 0-255
+#define NUM_LEDS 1
 
 // Buzzer, activated continuously when CO2 level is critical.
-#define BUZZER_PIN 14
+// Change this to D5 on WEMOS D1 mini if the buzzer doesn't work.
+#if defined(ESP32)
+  #define BUZZER_PIN 19
+#elif defined(ESP8266)
+  #define BUZZER_PIN D5
+#endif
 #define BEEP_DURATION_MS 100 // Beep milliseconds
 #define BEEP_TONE 1047 // C6
-
-// Switch, is pulled HIGH once for SWITCH_DURATION_MS when CO2 level becomes critical.
-#define SWITCH_PIN 12
-#define SWITCH_DURATION_MS 200
 
 // BME280 pressure sensor (optional).
 // Address should be 0x76 or 0x77.
@@ -35,7 +43,7 @@
 // Should be kept at 2 unless you want to save power.
 #define MEASURE_INTERVAL_S 2
 
-// WiFi
+// WiFi.
 // Set to 0 to disable altogether.
 #define WIFI_ENABLED 1
 
@@ -65,9 +73,8 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include <Adafruit_NeoPixel.h>
+#include <FastLED.h>
 #include <SparkFunBME280.h>
-
 
 #if defined(ESP32)
   #include <SparkFun_SCD30_Arduino_Library.h>
@@ -105,7 +112,7 @@ BME280 bme280;
 bool bme280isConnected = false;
 uint16_t pressure = 0;
 
-Adafruit_NeoPixel led = Adafruit_NeoPixel(1, LED_PIN, NEO_GRB + NEO_KHZ800);
+CRGB leds[NUM_LEDS];
 
 #if WIFI_ENABLED
 AsyncWebServer server(80);
@@ -120,9 +127,6 @@ void handleCaptivePortal(AsyncWebServerRequest *request);
  * Triggered once when the CO2 level goes critical.
  */
 void alarmOnce() {
-  digitalWrite(SWITCH_PIN, HIGH);
-  delay(SWITCH_DURATION_MS);
-  digitalWrite(SWITCH_PIN, LOW);
 }
 
 
@@ -147,11 +151,11 @@ void setup() {
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(SWITCH_PIN, OUTPUT);
 
-  // Initialize LED.
-  led.begin();
-  led.setBrightness(LED_BRIGHTNESS);
-  led.setPixelColor(0, 0, 0, 0);
-  led.show();
+  // Initialize LED(s).
+  FastLED.addLeds<LED_CHIPSET, LED_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
+  FastLED.setBrightness(LED_BRIGHTNESS);
+  FastLED.clear(true);
+  FastLED.show();
 
   // Initialize buzzer.
   pinMode(BUZZER_PIN, OUTPUT);
@@ -259,17 +263,16 @@ void loop() {
   }
   Serial.println("-----------------------------------------------------");
 
-  // Update LED.
+  // Update LED(s).
   if (co2 < CO2_WARN_PPM) {
-    led.setPixelColor(0, 0, 255, 0); // Green.
+    FastLED.showColor(CRGB(0, 255, 0)); // Green.
   }
   else if (co2 < CO2_CRITICAL_PPM) {
-    led.setPixelColor(0, 255, 200, 0); // Yellow.
+    FastLED.showColor(CRGB(255, 127, 0)); // Yellow.
   }
   else {
-    led.setPixelColor(0, 255, 0, 0); // Red.
+    FastLED.showColor(CRGB(255, 0, 0)); // Red.
   }
-  led.show();
 
   // Trigger alarms.
   if (co2 >= CO2_CRITICAL_PPM) {
