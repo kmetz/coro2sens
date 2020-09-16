@@ -160,8 +160,7 @@ void setup() {
   // Initialize LED(s).
   FastLED.addLeds<LED_CHIPSET, LED_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
   FastLED.setBrightness(LED_BRIGHTNESS);
-  FastLED.clear(true);
-  FastLED.show();
+  FastLED.showColor(CRGB(255, 255, 255), 10);
 
   // Initialize buzzer.
   pinMode(BUZZER_PIN, OUTPUT);
