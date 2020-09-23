@@ -58,7 +58,7 @@
 #define WIFI_CLIENT_PASSWORD "*****"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
-#define LOG_MINUTES 1
+#define LOG_MINUTES 60
 // Label describing the time axis.
 #define TIME_LABEL "1 hour"
 
