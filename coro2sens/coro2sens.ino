@@ -26,7 +26,6 @@
 #define NUM_LEDS 1
 
 // Buzzer, activated continuously when CO2 level is critical.
-// Change this to D5 on WEMOS D1 mini if the buzzer doesn't work.
 #if defined(ESP32)
   #define BUZZER_PIN 19
 #elif defined(ESP8266)
