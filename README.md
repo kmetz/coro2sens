@@ -97,4 +97,5 @@ ESP32 has bluetooth, for future expansion.
 
 
 Please let me know of any issues you might encounter ([open a GitHub issue](https://github.com/kmetz/coro2sens/issues/new/choose) or write me on [twitter.com/kmetz](https://twitter.com/kmetz) or k@kjpm.de).
+Also, I'd be for hire for customizations.
 
