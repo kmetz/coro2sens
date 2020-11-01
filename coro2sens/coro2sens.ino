@@ -11,77 +11,9 @@
 // - warn: 1000, critical: 2000
 // (https://www.umweltbundesamt.de/sites/default/files/medien/pdfs/kohlendioxid_2008.pdf)
 //
-#define CO2_WARN_PPM 800
-#define CO2_CRITICAL_PPM 1000
 
-
-// Buzzer, activated continuously when CO2 level is critical.
-#if defined(ESP32)
-#define BUZZER_PIN 19
-#elif defined(ESP8266)
-#define BUZZER_PIN D4
-#endif
-#define BEEP_DURATION_MS 100 // Beep milliseconds
-#define BEEP_TONE 1047 // C6
-
-// BME280 pressure sensor (optional).
-// Address should be 0x76 or 0x77.
-//#define BME280_I2C_ADDRESS 0x76
-
-// Update CO2 level every MEASURE_INTERVAL_S seconds.
-// Should be kept at 2 unless you want to save power.
-#define MEASURE_INTERVAL_S 2
-
-// WiFi.
-// Set to 0 to disable altogether.
-#define WIFI_ENABLED 1
-
-// 1 = captive portal hotspot without internet connection, showing data when you connect with it.
-// 0 = WiFi client, showing data when accessed via IP address.
-#define WIFI_HOTSPOT_MODE 1
-
-// AP name when WIFI_HOTSPOT_MODE is 1
-#define WIFI_HOTSPOT_NAME "coro2sens"
-
-// Credentials when WIFI_HOTSPOT_MODE is 0
-#define WIFI_CLIENT_SSID "your WiFi name"
-#define WIFI_CLIENT_PASSWORD "*****"
-
-// How long the graph/log in the WiFi portal should go back, in minutes.
-#define LOG_MINUTES 60
-// Label describing the time axis.
-#define TIME_LABEL "1 hour"
-
-// Activity indicator LED (use the built-in LED if your board has one).
-// Which pin on the Arduino is connected to the NeoPixels?
-#define NEOPIXEL_PIN   D4
-#undef NEOPIXEL_PIN
-
-#define OCTOPUS          1
-
-#if defined(OCTOPUS)
-#define LED_GREEN_PIN    D5
-#else
-#define LED_GREEN_PIN    D8
-#endif
-#define LED_YELLOW_PIN   D7
-#define LED_RED_PIN      D6
-
-
-// How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      16
-
-#define LED_INTENSITY  5
-#define COLOR_GREEN    0, 3*LED_INTENSITY, 0
-#define COLOR_YELLOW   2*LED_INTENSITY, LED_INTENSITY, 0
-#define COLOR_RED      3*LED_INTENSITY, 0, 0
-// =============================================================================
-
-
-#define GRAPH_W 600
-#define GRAPH_H 260
-#define LOG_SIZE GRAPH_W
-
+/* Platform and feature specific configuration */
+#include "config.h"
 
 #include <Arduino.h>
 #include <Wire.h>
@@ -148,6 +80,7 @@ void alarmOnce() {
    Triggered continuously when the CO2 level is critical.
 */
 void alarmContinuous() {
+#if defined(BUZZER_PIN)
 #if defined(ESP32)
   // Use Tone32.
   tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS, 0);
@@ -155,6 +88,7 @@ void alarmContinuous() {
   // Use Arduino tone().
   tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS);
 #endif
+#endif /* defined(BUZZER_PIN) */
 }
 
 
@@ -167,8 +101,11 @@ void setup() {
 #endif
 
   // Initialize buzzer.
+#ifdef BUZZER_PIN
   pinMode(BUZZER_PIN, OUTPUT);
+#endif
 
+  // Initialize GPIOs for LEDs.
 #ifdef LED_GREEN_PIN
   pinMode(LED_GREEN_PIN, OUTPUT);
   digitalWrite(LED_GREEN_PIN, HIGH);
@@ -195,22 +132,24 @@ void setup() {
   }
   scd30.setMeasurementInterval(MEASURE_INTERVAL_S);
 
+#ifdef BME280_I2C_ADDRESS
   // Initialize BME280 sensor.
-  //  bme280.setI2CAddress(BME280_I2C_ADDRESS);
-  //  if (bme280.beginI2C(Wire)) {
-  //    Serial.println("BMP280 pressure sensor detected.");
-  //    bme280isConnected = true;
-  //    // Settings.
-  //    bme280.setFilter(4);
-  //    bme280.setStandbyTime(0);
-  //    bme280.setTempOverSample(1);
-  //    bme280.setPressureOverSample(16);
-  //    bme280.setHumidityOverSample(1);
-  //    bme280.setMode(MODE_FORCED);
-  //  }
-  //  else {
-  //    Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
-  //  }
+    bme280.setI2CAddress(BME280_I2C_ADDRESS);
+    if (bme280.beginI2C(Wire)) {
+      Serial.println("BMP280 pressure sensor detected.");
+      bme280isConnected = true;
+      // Settings.
+      bme280.setFilter(4);
+      bme280.setStandbyTime(0);
+      bme280.setTempOverSample(1);
+      bme280.setPressureOverSample(16);
+      bme280.setHumidityOverSample(1);
+      bme280.setMode(MODE_FORCED);
+    }
+    else {
+      Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
+    }
+#endif
 
 #if WIFI_ENABLED
   // Initialize WiFi, DNS and web server.
@@ -245,14 +184,14 @@ void setup() {
 
 void set_pixel_by_co2(uint16_t co2_ppm)
 {
+#ifdef NEOPIXEL_PIN
   static int num_leds_old = 0;
   int num_leds = 0;
   num_leds = co2_ppm / 100; /* 1600 max., 16 pixels --> 100 ppm/pixel */
   num_leds = (num_leds > 16) ? 16 : num_leds;
 
-  //Serial.printf("num_leds: %d.\r\n", num_leds);
+  //Serial.printf("num_leds: %d.\r\n", num_leds); // only for debugging
 
-#ifdef NEOPIXEL_PIN
   /* avoid flickering */
   if (num_leds_old > num_leds)
   {
@@ -331,7 +270,7 @@ void loop() {
     co2avg = co2avgSamples = 0;
   }
 
-  // Print all sensor values.
+  // Print all sensor values to the serial console.
   Serial.printf(
     "[SCD30]  temp: %.2f°C, humid: %.2f%%, CO2: %dppm\r\n",
     scd30.getTemperature(), scd30.getHumidity(), co2
