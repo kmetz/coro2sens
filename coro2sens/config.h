@@ -2,6 +2,20 @@
 // ----------------------------------------------------------------------------
 #define OCTOPUS          1
 
+// Logging to serial console
+// ----------------------------------------------------------------------------
+#define USE_SERIAL_CONSOLE  1
+#undef USE_SERIAL_CONSOLE // Uncomment this line to disable logging to serial console (e.g. "deactivates" bright blue LED on NodeMCU)
+#if defined(USE_SERIAL_CONSOLE)
+#define serial_begin   Serial.begin
+#define serial_printf  Serial.printf
+#define serial_println Serial.println
+#else
+#define serial_begin   
+#define serial_printf  
+#define serial_println 
+#endif
+
 // LED and NeoPixel ring
 // ----------------------------------------------------------------------------
 // Activity indicator LED (use the built-in LED if your board has one).
