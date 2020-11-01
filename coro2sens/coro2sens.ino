@@ -14,29 +14,19 @@
 #define CO2_WARN_PPM 800
 #define CO2_CRITICAL_PPM 1000
 
-// LED warning light (always on, green / yellow / red).
-#if defined(ESP32)
-  #define LED_PIN 16
-#elif defined(ESP8266)
-  #define LED_PIN D3
-#endif
-#define LED_CHIPSET WS2812B
-#define LED_COLOR_ORDER GRB
-#define LED_BRIGHTNESS 42 // 0-255
-#define NUM_LEDS 1
 
 // Buzzer, activated continuously when CO2 level is critical.
 #if defined(ESP32)
-  #define BUZZER_PIN 19
+#define BUZZER_PIN 19
 #elif defined(ESP8266)
-  #define BUZZER_PIN D5
+#define BUZZER_PIN D4
 #endif
 #define BEEP_DURATION_MS 100 // Beep milliseconds
 #define BEEP_TONE 1047 // C6
 
 // BME280 pressure sensor (optional).
 // Address should be 0x76 or 0x77.
-#define BME280_I2C_ADDRESS 0x76
+//#define BME280_I2C_ADDRESS 0x76
 
 // Update CO2 level every MEASURE_INTERVAL_S seconds.
 // Should be kept at 2 unless you want to save power.
@@ -63,8 +53,28 @@
 #define TIME_LABEL "1 hour"
 
 // Activity indicator LED (use the built-in LED if your board has one).
-//#define ACTIVITY_LED_PIN 5
+// Which pin on the Arduino is connected to the NeoPixels?
+#define NEOPIXEL_PIN   D4
+#undef NEOPIXEL_PIN
 
+#define OCTOPUS          1
+
+#if defined(OCTOPUS)
+#define LED_GREEN_PIN    D5
+#else
+#define LED_GREEN_PIN    D8
+#endif
+#define LED_YELLOW_PIN   D7
+#define LED_RED_PIN      D6
+
+
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS      16
+
+#define LED_INTENSITY  5
+#define COLOR_GREEN    0, 3*LED_INTENSITY, 0
+#define COLOR_YELLOW   2*LED_INTENSITY, LED_INTENSITY, 0
+#define COLOR_RED      3*LED_INTENSITY, 0, 0
 // =============================================================================
 
 
@@ -75,29 +85,29 @@
 
 #include <Arduino.h>
 #include <Wire.h>
-#include <FastLED.h>
+#include <Adafruit_NeoPixel.h>
 #include <SparkFunBME280.h>
 
 #if defined(ESP32)
-  #include <SparkFun_SCD30_Arduino_Library.h>
-  #include <Tone32.h>
-  #if WIFI_ENABLED
-    #include <WiFi.h>
-    #include <AsyncTCP.h>
-    #include <ESPAsyncWebServer.h>
-  #endif
+#include <SparkFun_SCD30_Arduino_Library.h>
+#include <Tone32.h>
+#if WIFI_ENABLED
+#include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#endif
 
 #elif defined(ESP8266)
-  #include <paulvha_SCD30.h>
-  #if WIFI_ENABLED
-    #include <ESP8266WiFi.h>
-    #include <ESPAsyncTCP.h>
-  #endif
+#include <paulvha_SCD30.h>
+#if WIFI_ENABLED
+#include <ESP8266WiFi.h>
+#include <ESPAsyncTCP.h>
+#endif
 #endif
 
 #if WIFI_ENABLED
-  #include <ESPAsyncWebServer.h>
-  #include <DNSServer.h>
+#include <ESPAsyncWebServer.h>
+#include <DNSServer.h>
 #endif
 
 
@@ -110,11 +120,13 @@ uint32_t co2logPos = 0; // Current buffer start position.
 uint16_t co2logDownsample = max(1, ((((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S) / LOG_SIZE));
 uint16_t co2avg, co2avgSamples = 0; // Used for downsampling.
 
+#ifdef NEOPIXEL_PIN
+Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+#endif
+
 BME280 bme280;
 bool bme280isConnected = false;
 uint16_t pressure = 0;
-
-CRGB leds[NUM_LEDS];
 
 #if WIFI_ENABLED
 AsyncWebServer server(80);
@@ -126,15 +138,15 @@ void handleCaptivePortal(AsyncWebServerRequest *request);
 
 
 /**
- * Triggered once when the CO2 level goes critical.
- */
+   Triggered once when the CO2 level goes critical.
+*/
 void alarmOnce() {
 }
 
 
 /**
- * Triggered continuously when the CO2 level is critical.
- */
+   Triggered continuously when the CO2 level is critical.
+*/
 void alarmContinuous() {
 #if defined(ESP32)
   // Use Tone32.
@@ -149,20 +161,28 @@ void alarmContinuous() {
 void setup() {
   Serial.begin(115200);
 
-  // Initialize pins.
-  pinMode(BUZZER_PIN, OUTPUT);
-#if defined(ACTIVITY_LED_PIN)
-  pinMode(ACTIVITY_LED_PIN, OUTPUT);
-  digitalWrite(ACTIVITY_LED_PIN, HIGH);
-#endif
-
   // Initialize LED(s).
-  FastLED.addLeds<LED_CHIPSET, LED_PIN, LED_COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.setBrightness(LED_BRIGHTNESS);
-  FastLED.showColor(CRGB(255, 255, 255), 10);
+#ifdef NEOPIXEL_PIN
+  pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+#endif
 
   // Initialize buzzer.
   pinMode(BUZZER_PIN, OUTPUT);
+
+#ifdef LED_GREEN_PIN
+  pinMode(LED_GREEN_PIN, OUTPUT);
+  digitalWrite(LED_GREEN_PIN, HIGH);
+#endif
+#ifdef LED_RED_PIN
+  pinMode(LED_RED_PIN, OUTPUT);
+  digitalWrite(LED_RED_PIN, HIGH);
+#endif
+#ifdef LED_YELLOW_PIN
+  pinMode(LED_YELLOW_PIN, OUTPUT);
+  digitalWrite(LED_YELLOW_PIN, HIGH);
+#endif
+
+  delay(2000);
 
   // Initialize SCD30 sensor.
   Wire.begin();
@@ -176,21 +196,21 @@ void setup() {
   scd30.setMeasurementInterval(MEASURE_INTERVAL_S);
 
   // Initialize BME280 sensor.
-  bme280.setI2CAddress(BME280_I2C_ADDRESS);
-  if (bme280.beginI2C(Wire)) {
-    Serial.println("BMP280 pressure sensor detected.");
-    bme280isConnected = true;
-    // Settings.
-    bme280.setFilter(4);
-    bme280.setStandbyTime(0);
-    bme280.setTempOverSample(1);
-    bme280.setPressureOverSample(16);
-    bme280.setHumidityOverSample(1);
-    bme280.setMode(MODE_FORCED);
-  }
-  else {
-    Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
-  }
+  //  bme280.setI2CAddress(BME280_I2C_ADDRESS);
+  //  if (bme280.beginI2C(Wire)) {
+  //    Serial.println("BMP280 pressure sensor detected.");
+  //    bme280isConnected = true;
+  //    // Settings.
+  //    bme280.setFilter(4);
+  //    bme280.setStandbyTime(0);
+  //    bme280.setTempOverSample(1);
+  //    bme280.setPressureOverSample(16);
+  //    bme280.setHumidityOverSample(1);
+  //    bme280.setMode(MODE_FORCED);
+  //  }
+  //  else {
+  //    Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
+  //  }
 
 #if WIFI_ENABLED
   // Initialize WiFi, DNS and web server.
@@ -223,6 +243,63 @@ void setup() {
 #endif
 }
 
+void set_pixel_by_co2(uint16_t co2_ppm)
+{
+  static int num_leds_old = 0;
+  int num_leds = 0;
+  num_leds = co2_ppm / 100; /* 1600 max., 16 pixels --> 100 ppm/pixel */
+  num_leds = (num_leds > 16) ? 16 : num_leds;
+
+  //Serial.printf("num_leds: %d.\r\n", num_leds);
+
+#ifdef NEOPIXEL_PIN
+  /* avoid flickering */
+  if (num_leds_old > num_leds)
+  {
+    pixels.clear(); // Set all pixel colors to 'off'
+  }
+  num_leds_old = num_leds;
+
+  for (int i = 0; i < num_leds; i++)
+  {
+    if (co2_ppm < CO2_WARN_PPM)
+    {
+      pixels.setPixelColor(i, pixels.Color(COLOR_GREEN));
+    }
+    else if (co2_ppm >= CO2_WARN_PPM && co2_ppm <= CO2_CRITICAL_PPM)
+    {
+      pixels.setPixelColor(i, pixels.Color(COLOR_YELLOW));
+    }
+    else
+    {
+      pixels.setPixelColor(i, pixels.Color(COLOR_RED));
+    }
+    pixels.show();   // Send the updated pixel colors to the hardware.
+  }
+#endif
+
+#if defined(LED_GREEN_PIN) && defined(LED_YELLOW_PIN) && defined(LED_RED_PIN)
+    if (co2_ppm < CO2_WARN_PPM)
+    {
+      digitalWrite(LED_GREEN_PIN, HIGH);
+      digitalWrite(LED_YELLOW_PIN, LOW);
+      digitalWrite(LED_RED_PIN, LOW);
+    }
+    else if (co2_ppm >= CO2_WARN_PPM && co2_ppm <= CO2_CRITICAL_PPM)
+    {
+      digitalWrite(LED_GREEN_PIN, LOW);
+      digitalWrite(LED_YELLOW_PIN, HIGH);
+      digitalWrite(LED_RED_PIN, LOW);
+    }
+    else
+    {
+      digitalWrite(LED_GREEN_PIN, LOW);
+      digitalWrite(LED_YELLOW_PIN, LOW);
+      digitalWrite(LED_RED_PIN, HIGH);
+    }
+#endif
+
+}
 
 void loop() {
   // Tasks that need to run continuously.
@@ -234,10 +311,6 @@ void loop() {
   if ((millis() - lastMeasureTime) < (MEASURE_INTERVAL_S * 1000)) {
     return;
   }
-
-#if defined(ACTIVITY_LED_PIN)
-  digitalWrite(ACTIVITY_LED_PIN, LOW);
-#endif
 
   // Read sensors.
   if (bme280isConnected) {
@@ -272,15 +345,7 @@ void loop() {
   Serial.println("-----------------------------------------------------");
 
   // Update LED(s).
-  if (co2 < CO2_WARN_PPM) {
-    FastLED.showColor(CRGB(0, 255, 0)); // Green.
-  }
-  else if (co2 < CO2_CRITICAL_PPM) {
-    FastLED.showColor(CRGB(255, 127, 0)); // Yellow.
-  }
-  else {
-    FastLED.showColor(CRGB(255, 0, 0)); // Red.
-  }
+  set_pixel_by_co2(co2);
 
   // Trigger alarms.
   if (co2 >= CO2_CRITICAL_PPM) {
@@ -294,19 +359,15 @@ void loop() {
     alarmHasTriggered = false;
   }
 
-#if defined(ACTIVITY_LED_PIN)
-  digitalWrite(ACTIVITY_LED_PIN, HIGH);
-#endif
-
   lastMeasureTime = millis();
 }
 
 
 #if WIFI_ENABLED
 /**
- * Handle requests for the captive portal.
- * @param request
- */
+   Handle requests for the captive portal.
+   @param request
+*/
 void handleCaptivePortal(AsyncWebServerRequest *request) {
   Serial.println("handleCaptivePortal");
   AsyncResponseStream *res = request->beginResponseStream("text/html");
@@ -320,7 +381,7 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
 
   // Current measurement.
   res->printf(R"(<h1><span style="color:%s">&#9679;</span> %d ppm CO<sub>2</sub></h1>)",
-                   co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
+              co2 > CO2_CRITICAL_PPM ? "red" : co2 > CO2_WARN_PPM ? "yellow" : "green", co2);
 
   // Generate SVG graph.
   uint16_t maxVal = CO2_CRITICAL_PPM + (CO2_CRITICAL_PPM - CO2_WARN_PPM);
