@@ -51,6 +51,7 @@ uint16_t co2log[LOG_SIZE] = {0}; // Ring buffer.
 uint32_t co2logPos = 0; // Current buffer start position.
 uint16_t co2logDownsample = max(1, ((((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S) / LOG_SIZE));
 uint16_t co2avg, co2avgSamples = 0; // Used for downsampling.
+char hotspot_name[WIFI_HOTSPOT_SIZE]; // the buffer for the Wifi hotspot name
 
 #ifdef NEOPIXEL_PIN
 Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
@@ -93,6 +94,7 @@ void alarmContinuous() {
 
 
 void setup() {
+  byte mac[6]; // the MAC address of your Wifi shield
   serial_begin(115200);
 
   // Initialize LED(s).
@@ -155,12 +157,15 @@ void setup() {
   // Initialize WiFi, DNS and web server.
 #if WIFI_HOTSPOT_MODE
   serial_println("Starting WiFi hotspot ...");
+  WiFi.macAddress(mac);
+  //serial_println( WiFi.macAddress() );
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, netMsk);
-  WiFi.softAP(WIFI_HOTSPOT_NAME);
+  snprintf(hotspot_name, WIFI_HOTSPOT_SIZE, "%s_%02X%02X%02X%02X%02X%02X", WIFI_HOTSPOT_PREFIX, mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+  WiFi.softAP(hotspot_name);
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(53, "*", apIP);
-  serial_printf("WiFi hotspot started (\"%s\")\r\n", WIFI_HOTSPOT_NAME);
+  serial_printf("WiFi hotspot started (\"%s\")\r\n", hotspot_name);
 #else
   serial_println("Connecting WiFi ...");
   WiFi.begin(WIFI_CLIENT_SSID, WIFI_CLIENT_PASSWORD);

@@ -5,7 +5,7 @@
 // Logging to serial console
 // ----------------------------------------------------------------------------
 #define USE_SERIAL_CONSOLE  1
-#undef USE_SERIAL_CONSOLE // Uncomment this line to disable logging to serial console (e.g. "deactivates" bright blue LED on NodeMCU)
+//#undef USE_SERIAL_CONSOLE // Uncomment this line to disable logging to serial console (e.g. "deactivates" bright blue LED on NodeMCU)
 #if defined(USE_SERIAL_CONSOLE)
 #define serial_begin   Serial.begin
 #define serial_printf  Serial.printf
@@ -20,17 +20,20 @@
 // ----------------------------------------------------------------------------
 // Activity indicator LED (use the built-in LED if your board has one).
 // Which pin on the Arduino is connected to the NeoPixels?
-#define NEOPIXEL_PIN   D4
-#undef NEOPIXEL_PIN
 
 #if defined(OCTOPUS)
 #define LED_GREEN_PIN    D5
-#else
-#define LED_GREEN_PIN    D8
-#endif
 #define LED_YELLOW_PIN   D7
 #define LED_RED_PIN      D6
+#define NEOPIXEL_PIN     D8
+#else
+#define LED_GREEN_PIN    D8
+#define LED_YELLOW_PIN   D7
+#define LED_RED_PIN      D6
+#define NEOPIXEL_PIN     D4
+#endif
 
+//#undef NEOPIXEL_PIN
 
 // How many NeoPixels are attached to the Arduino?
 #if defined(NEOPIXEL_PIN)
@@ -80,7 +83,8 @@
 #define WIFI_HOTSPOT_MODE 1
 
 // AP name when WIFI_HOTSPOT_MODE is 1
-#define WIFI_HOTSPOT_NAME "coro2sens"
+#define WIFI_HOTSPOT_PREFIX "coro2sens"
+#define WIFI_HOTSPOT_SIZE 255
 
 // Credentials when WIFI_HOTSPOT_MODE is 0
 #define WIFI_CLIENT_SSID "your WiFi name"
