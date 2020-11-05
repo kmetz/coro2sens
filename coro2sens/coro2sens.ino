@@ -69,6 +69,7 @@ DNSServer dnsServer;
 void handleCaptivePortal(AsyncWebServerRequest *request);
 #endif
 
+void indicate_calib(void);
 
 /**
    Triggered once when the CO2 level goes critical.
@@ -101,6 +102,9 @@ void setup() {
 #ifdef NEOPIXEL_PIN
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
 #endif
+
+  // initialize digital pin for the button as input.
+  pinMode(BUTTON_PIN, INPUT);
 
   // Initialize buzzer.
 #ifdef BUZZER_PIN
@@ -245,6 +249,29 @@ void set_pixel_by_co2(uint16_t co2_ppm)
 
 }
 
+void indicate_calib(void)
+{
+#ifdef NEOPIXEL_PIN
+  pixels.clear(); // Set all pixel colors to 'off'
+  for (int i = 0; i < NUMPIXELS; i++)
+  {
+    if( i % 3 == 0 )
+    {
+      pixels.setPixelColor(i, pixels.Color(COLOR_GREEN));
+    }
+    else if( i % 3 == 1 )
+    {
+      pixels.setPixelColor(i, pixels.Color(COLOR_YELLOW));
+    }
+    else
+    {
+      pixels.setPixelColor(i, pixels.Color(COLOR_RED));
+    }
+  }
+  pixels.show();   // Send the updated pixel colors to the hardware.
+#endif
+}
+
 void loop() {
   // Tasks that need to run continuously.
 #if WIFI_ENABLED && WIFI_HOTSPOT_MODE
@@ -254,6 +281,17 @@ void loop() {
   // Early exit.
   if ((millis() - lastMeasureTime) < (MEASURE_INTERVAL_S * 1000)) {
     return;
+  }
+
+  if( LOW == digitalRead(BUTTON_PIN) )
+  {
+    Serial.print("Start SCD 30 calibration, please wait 30 s ...");
+    indicate_calib();
+    delay(30000);
+    scd30.setAltitudeCompensation(500); // Altitude in m ueber NN 
+    //scd30.setForcedRecalibrationFactor(400); // fresh air 
+    scd30.setForceRecalibration(0);
+    pixels.clear();
   }
 
   // Read sensors.

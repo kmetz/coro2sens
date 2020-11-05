@@ -99,3 +99,8 @@
 #define GRAPH_H 260
 #define LOG_SIZE GRAPH_W
 
+// Button
+// ----------------------------------------------------------------------------
+#define BUTTON_PIN  D3  // "GPIO0/FLASH" button on NodeMCU
+
+
