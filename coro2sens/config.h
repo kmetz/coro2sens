@@ -75,22 +75,12 @@
 // Should be kept at 2 unless you want to save power.
 #define MEASURE_INTERVAL_S 2
 
-// WiFi
+// WiFi hotspot configuration
 // ----------------------------------------------------------------------------
 // Set to 0 to disable altogether.
 #define WIFI_ENABLED 1
-
-// 1 = captive portal hotspot without internet connection, showing data when you connect with it.
-// 0 = WiFi client, showing data when accessed via IP address.
-#define WIFI_HOTSPOT_MODE 1
-
-// AP name when WIFI_HOTSPOT_MODE is 1
 #define WIFI_HOTSPOT_PREFIX "coro2sens"
 #define WIFI_HOTSPOT_SIZE 255
-
-// Credentials when WIFI_HOTSPOT_MODE is 0
-#define WIFI_CLIENT_SSID "your WiFi name"
-#define WIFI_CLIENT_PASSWORD "*****"
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
 #define LOG_MINUTES 60

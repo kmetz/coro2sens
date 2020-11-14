@@ -153,7 +153,6 @@ void setup() {
 
 #if WIFI_ENABLED
   // Initialize WiFi, DNS and web server.
-#if WIFI_HOTSPOT_MODE
   serial_println("Starting WiFi hotspot ...");
   WiFi.macAddress(mac);
   //serial_println( WiFi.macAddress() );
@@ -164,21 +163,7 @@ void setup() {
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
   dnsServer.start(53, "*", apIP);
   serial_printf("WiFi hotspot started (\"%s\")\r\n", hotspot_name);
-#else
-  serial_println("Connecting WiFi ...");
-  WiFi.begin(WIFI_CLIENT_SSID, WIFI_CLIENT_PASSWORD);
-  uint timeout = 30;
-  while (timeout > 0 && WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    timeout--;
-  }
-  if (WiFi.status() == WL_CONNECTED) {
-    serial_printf("WiFi connected (%s).\r\n", WiFi.localIP().toString().c_str());
-  }
-  else {
-    serial_println("WiFi connection failed.");
-  };
-#endif
+
   server.on("/", HTTP_GET, handleCaptivePortal);
   server.onNotFound(handleCaptivePortal);
   server.begin();
@@ -323,7 +308,7 @@ void loop() {
   static uint8_t nLoopCnt = 0;
 
   // Tasks that need to run continuously.
-#if WIFI_ENABLED && WIFI_HOTSPOT_MODE
+#if WIFI_ENABLED
   dnsServer.processNextRequest();
 #endif
 
@@ -332,7 +317,7 @@ void loop() {
     return;
   }
 
-#if WIFI_HOTSPOT_MODE
+#if WIFI_ENABLED
   if( ++nLoopCnt == 20 )
   {
     serial_printf("WiFi hotspot available (\"%s\")\r\n", hotspot_name);
