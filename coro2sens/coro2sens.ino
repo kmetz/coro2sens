@@ -70,6 +70,11 @@ void handleCaptivePortal(AsyncWebServerRequest *request);
 #endif
 
 void indicate_calib(void);
+void set_green_led(int value);
+void set_yellow_led(int value);
+void set_red_led(int value);
+void set_warn_led(int value);
+void init_leds(void);
 
 /**
    Triggered once when the CO2 level goes critical.
@@ -103,26 +108,15 @@ void setup() {
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
 #endif
 
+  // Initialize GPIOs for discrete LEDs.
+  init_leds();
+
   // initialize digital pin for the button as input.
   pinMode(BUTTON_PIN, INPUT);
 
   // Initialize buzzer.
 #ifdef BUZZER_PIN
   pinMode(BUZZER_PIN, OUTPUT);
-#endif
-
-  // Initialize GPIOs for LEDs.
-#ifdef LED_GREEN_PIN
-  pinMode(LED_GREEN_PIN, OUTPUT);
-  digitalWrite(LED_GREEN_PIN, HIGH);
-#endif
-#ifdef LED_RED_PIN
-  pinMode(LED_RED_PIN, OUTPUT);
-  digitalWrite(LED_RED_PIN, HIGH);
-#endif
-#ifdef LED_YELLOW_PIN
-  pinMode(LED_YELLOW_PIN, OUTPUT);
-  digitalWrite(LED_YELLOW_PIN, HIGH);
 #endif
 
   delay(2000);
@@ -226,27 +220,80 @@ void set_pixel_by_co2(uint16_t co2_ppm)
   }
 #endif
 
-#if defined(LED_GREEN_PIN) && defined(LED_YELLOW_PIN) && defined(LED_RED_PIN)
+  /* if at least one LED is used */
+#if defined(LED_GREEN_PIN) || defined(LED_YELLOW_PIN) || defined(LED_RED_PIN)
     if (co2_ppm < CO2_WARN_PPM)
     {
-      digitalWrite(LED_GREEN_PIN, HIGH);
-      digitalWrite(LED_YELLOW_PIN, LOW);
-      digitalWrite(LED_RED_PIN, LOW);
+      set_green_led(HIGH);
+      set_yellow_led(LOW);
+      set_red_led(LOW);
+      set_warn_led(LOW);
     }
     else if (co2_ppm >= CO2_WARN_PPM && co2_ppm <= CO2_CRITICAL_PPM)
     {
-      digitalWrite(LED_GREEN_PIN, LOW);
-      digitalWrite(LED_YELLOW_PIN, HIGH);
-      digitalWrite(LED_RED_PIN, LOW);
+      set_green_led(LOW);
+      set_yellow_led(HIGH);
+      set_red_led(LOW);
+      set_warn_led(HIGH);
     }
     else
     {
-      digitalWrite(LED_GREEN_PIN, LOW);
-      digitalWrite(LED_YELLOW_PIN, LOW);
-      digitalWrite(LED_RED_PIN, HIGH);
+      set_green_led(LOW);
+      set_yellow_led(LOW);
+      set_red_led(HIGH);
+      set_warn_led(HIGH);
     }
 #endif
 
+}
+
+void init_leds(void)
+{
+#ifdef LED_GREEN_PIN
+  pinMode(LED_GREEN_PIN, OUTPUT);
+  set_green_led(HIGH);
+#endif
+#ifdef LED_RED_PIN
+  pinMode(LED_RED_PIN, OUTPUT);
+  set_red_led(HIGH);
+#endif
+#ifdef LED_YELLOW_PIN
+  pinMode(LED_YELLOW_PIN, OUTPUT);
+  set_yellow_led(HIGH);
+#endif
+#ifdef LED_WARN_PIN
+  pinMode(LED_WARN_PIN, OUTPUT);
+  set_warn_led(HIGH);
+#endif
+  
+}
+
+void set_green_led(int value)
+{
+#ifdef LED_GREEN_PIN
+  digitalWrite(LED_GREEN_PIN, value);
+#endif
+}
+
+void set_yellow_led(int value)
+{
+#ifdef LED_YELLOW_PIN
+  digitalWrite(LED_YELLOW_PIN, value);
+#endif
+}
+
+void set_red_led(int value)
+{
+#ifdef LED_RED_PIN
+  digitalWrite(LED_RED_PIN, value);
+#endif
+}
+
+void set_warn_led(int value)
+{
+#ifdef LED_WARN_PIN
+  digitalWrite(LED_WARN_PIN, value);
+#endif
 }
 
 void indicate_calib(void)
