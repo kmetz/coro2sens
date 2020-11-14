@@ -306,9 +306,10 @@ void loop() {
     Serial.print("Start SCD 30 calibration, please wait 30 s ...");
     indicate_calib();
     delay(30000);
-    scd30.setAltitudeCompensation(500); // Altitude in m ueber NN 
-    //scd30.setForcedRecalibrationFactor(400); // fresh air 
-    scd30.setForceRecalibration(0);
+    scd30.setAutoSelfCalibration(false); // deactivate self-calibration; setting is stored in non-volatile memory
+    delay(1000);
+    scd30.setForceRecalibration(400); // set to fresh air, estimate 400 ppm as a reference (=minimum)
+    delay(1000);
     pixels.clear();
   }
 
