@@ -63,12 +63,6 @@
 #define CO2_WARN_PPM     800
 #define CO2_CRITICAL_PPM 1000
 
-// BME280 pressure sensor (optional).
-// ----------------------------------------------------------------------------
-// Address should be 0x76 or 0x77.
-#define BME280_I2C_ADDRESS 0x76
-#undef BME280_I2C_ADDRESS // Uncomment if pressure sensor is not used
-
 // CO2 measurement
 // ----------------------------------------------------------------------------
 // Update CO2 level every MEASURE_INTERVAL_S seconds.

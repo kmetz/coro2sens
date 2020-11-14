@@ -18,7 +18,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_NeoPixel.h>
-#include <SparkFunBME280.h>
 
 #if defined(ESP32)
 #include <SparkFun_SCD30_Arduino_Library.h>
@@ -56,10 +55,6 @@ char hotspot_name[WIFI_HOTSPOT_SIZE]; // the buffer for the Wifi hotspot name
 #ifdef NEOPIXEL_PIN
 Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
 #endif
-
-BME280 bme280;
-bool bme280isConnected = false;
-uint16_t pressure = 0;
 
 #if WIFI_ENABLED
 AsyncWebServer server(80);
@@ -131,25 +126,6 @@ void setup() {
     delay(UINT32_MAX);
   }
   scd30.setMeasurementInterval(MEASURE_INTERVAL_S);
-
-#ifdef BME280_I2C_ADDRESS
-  // Initialize BME280 sensor.
-    bme280.setI2CAddress(BME280_I2C_ADDRESS);
-    if (bme280.beginI2C(Wire)) {
-      serial_println("BMP280 pressure sensor detected.");
-      bme280isConnected = true;
-      // Settings.
-      bme280.setFilter(4);
-      bme280.setStandbyTime(0);
-      bme280.setTempOverSample(1);
-      bme280.setPressureOverSample(16);
-      bme280.setHumidityOverSample(1);
-      bme280.setMode(MODE_FORCED);
-    }
-    else {
-      serial_println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
-    }
-#endif
 
 #if WIFI_ENABLED
   // Initialize WiFi, DNS and web server.
@@ -336,11 +312,6 @@ void loop() {
     pixels.clear();
   }
 
-  // Read sensors.
-  if (bme280isConnected) {
-    pressure = (uint16_t) (bme280.readFloatPressure() / 100);
-    scd30.setAmbientPressure(pressure);
-  }
   if (scd30.dataAvailable()) {
     co2 = scd30.getCO2();
   }
@@ -360,12 +331,6 @@ void loop() {
     "[SCD30]  temp: %.2f°C, humid: %.2f%%, CO2: %dppm\r\n",
     scd30.getTemperature(), scd30.getHumidity(), co2
   );
-  if (bme280isConnected) {
-    serial_printf(
-      "[BME280] temp: %.2f°C, humid: %.2f%%, press: %dhPa\r\n",
-      bme280.readTempC(), bme280.readFloatHumidity(), pressure
-    );
-  }
   serial_println("-----------------------------------------------------");
 
   // Update LED(s).
