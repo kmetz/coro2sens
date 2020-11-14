@@ -273,6 +273,8 @@ void indicate_calib(void)
 }
 
 void loop() {
+  static uint8_t nLoopCnt = 0;
+
   // Tasks that need to run continuously.
 #if WIFI_ENABLED && WIFI_HOTSPOT_MODE
   dnsServer.processNextRequest();
@@ -282,6 +284,14 @@ void loop() {
   if ((millis() - lastMeasureTime) < (MEASURE_INTERVAL_S * 1000)) {
     return;
   }
+
+#if WIFI_HOTSPOT_MODE
+  if( ++nLoopCnt == 20 )
+  {
+    serial_printf("WiFi hotspot available (\"%s\")\r\n", hotspot_name);
+    nLoopCnt = 0;
+  }
+#endif
 
   if( LOW == digitalRead(BUTTON_PIN) )
   {
