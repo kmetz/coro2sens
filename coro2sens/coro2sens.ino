@@ -308,13 +308,18 @@ void loop() {
     delay(30000);
     scd30.setAutoSelfCalibration(false); // deactivate self-calibration; setting is stored in non-volatile memory
     delay(1000);
-    scd30.setForceRecalibration(400); // set to fresh air, estimate 400 ppm as a reference (=minimum)
+    scd30.setForceRecalibration(410); // set to fresh air, estimate 410 ppm as a reference (400 ppm is the minimum for the function parameter)
     delay(1000);
     pixels.clear();
   }
 
   if (scd30.dataAvailable()) {
     co2 = scd30.getCO2();
+
+    if( co2 < 400 ) // do not use implausible values, concentration is unlikely to be < 400 ppm
+    {
+      co2 = 400;
+    }
   }
 
   // Average (downsample) and log CO2 values for the graph.
