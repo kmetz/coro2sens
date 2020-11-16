@@ -186,7 +186,7 @@ void setup() {
     bme280.setTempOverSample(1);
     bme280.setPressureOverSample(16);
     bme280.setHumidityOverSample(1);
-    bme280.setMode(MODE_FORCED);
+    bme280.setMode(MODE_NORMAL);
   }
   else {
     Serial.println("BMP280 pressure sensor not detected. Please check wiring. Continuing without ambient pressure compensation.");
