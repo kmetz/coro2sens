@@ -46,6 +46,7 @@ SCD30 scd30;
 uint16_t co2 = 0;
 unsigned long lastMeasureTime = 0;
 bool alarmHasTriggered = false;
+uint16_t alarmActiveTimer = 0;
 uint16_t co2log[LOG_SIZE] = {0}; // Ring buffer.
 uint32_t co2logPos = 0; // Current buffer start position.
 uint16_t co2logDownsample = max(1, ((((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S) / LOG_SIZE));
@@ -72,24 +73,21 @@ void set_warn_led(int value);
 void init_leds(void);
 
 /**
-   Triggered once when the CO2 level goes critical.
-*/
-void alarmOnce() {
-}
-
-
-/**
    Triggered continuously when the CO2 level is critical.
 */
 void alarmContinuous() {
 #if defined(BUZZER_PIN)
+  serial_printf("alarmActiveTimer: %d\r\n", alarmActiveTimer);
+  if( alarmActiveTimer <= BUZZER_MAX_BEEPS ) // beep only up to a specific limit after alarm has triggered
+  {
 #if defined(ESP32)
-  // Use Tone32.
-  tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS, 0);
+    // Use Tone32.
+    tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS, 0);
 #else
-  // Use Arduino tone().
-  tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS);
+    // Use Arduino tone().
+    tone(BUZZER_PIN, BEEP_TONE, BEEP_DURATION_MS);
 #endif
+  }
 #endif /* defined(BUZZER_PIN) */
 }
 
@@ -316,9 +314,10 @@ void loop() {
   if (scd30.dataAvailable()) {
     co2 = scd30.getCO2();
 
-    if( co2 < 400 ) // do not use implausible values, concentration is unlikely to be < 400 ppm
+    if( co2 < 300 ) // do not use implausible values, concentration is unlikely to be < 300 ppm
     {
-      co2 = 400;
+      serial_printf("[WARN] Implausible CO2 value: %d\n", co2);
+      co2 = 300;
     }
   }
 
@@ -342,16 +341,26 @@ void loop() {
   // Update LED(s).
   set_pixel_by_co2(co2);
 
-  // Trigger alarms.
+  // Handle alarms (trigger, reset)
   if (co2 >= CO2_CRITICAL_PPM) {
-    alarmContinuous();
-    if (!alarmHasTriggered) {
-      alarmOnce();
+    /* rising edge detection for trigger */
+    if (!alarmHasTriggered)
+    {
       alarmHasTriggered = true;
     }
+    alarmActiveTimer++;
+    alarmContinuous();
   }
-  if (co2 < CO2_CRITICAL_PPM && alarmHasTriggered) {
-    alarmHasTriggered = false;
+  else
+  {
+    /* falling edge detection for trigger */
+    if( alarmHasTriggered)
+    {
+      alarmHasTriggered = false;
+    }
+
+    /* reset active timer value */
+    alarmActiveTimer = 0;
   }
 
   lastMeasureTime = millis();

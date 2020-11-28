@@ -54,7 +54,8 @@
 
 #ifdef BUZZER_PIN
   #define BEEP_DURATION_MS  200  /* Beep duration in milliseconds */
-  #define BEEP_TONE         1047  /* Note C6 (see also: pitches.h on toneMelody example) */
+  #define BEEP_TONE         1047 /* Note C6 (see also: pitches.h on toneMelody example) */
+  #define BUZZER_MAX_BEEPS  7    /* Maximum number of beeps for an active alarm */
 #endif
 
 
