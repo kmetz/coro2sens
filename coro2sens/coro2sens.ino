@@ -136,35 +136,39 @@ void set_pixel_by_co2(uint16_t co2_ppm)
 {
 #ifdef NEOPIXEL_PIN
   static int num_leds_old = 0;
-  int num_leds = 0;
+  static int num_leds = 0;
+  static uint32_t colorval = pixels.Color(COLOR_BLACK);
   num_leds = co2_ppm / 100; /* 1600 max., 16 pixels --> 100 ppm/pixel */
   num_leds = (num_leds > 16) ? 16 : num_leds;
 
   //serial_printf("num_leds: %d.\r\n", num_leds); // only for debugging
 
-  /* avoid flickering */
+  /* avoid flickering, so switch off pixels only if number of LEDs switched on has decreased */
   if (num_leds_old > num_leds)
   {
     pixels.clear(); // Set all pixel colors to 'off'
   }
   num_leds_old = num_leds;
 
+  /* Select color for all pixels */
+  if (co2_ppm < CO2_WARN_PPM)
+  {
+    colorval = pixels.Color(COLOR_GREEN);
+  }
+  else if (co2_ppm >= CO2_WARN_PPM && co2_ppm <= CO2_CRITICAL_PPM)
+  {
+    colorval = pixels.Color(COLOR_YELLOW);
+  }
+  else
+  {
+    colorval = pixels.Color(COLOR_RED);
+  }
+
   for (int i = 0; i < num_leds; i++)
   {
-    if (co2_ppm < CO2_WARN_PPM)
-    {
-      pixels.setPixelColor(i, pixels.Color(COLOR_GREEN));
-    }
-    else if (co2_ppm >= CO2_WARN_PPM && co2_ppm <= CO2_CRITICAL_PPM)
-    {
-      pixels.setPixelColor(i, pixels.Color(COLOR_YELLOW));
-    }
-    else
-    {
-      pixels.setPixelColor(i, pixels.Color(COLOR_RED));
-    }
-    pixels.show();   // Send the updated pixel colors to the hardware.
+    pixels.setPixelColor(i, colorval);    
   }
+  pixels.show(); // Send the updated pixel colors to the hardware (after the loop).
 #endif
 
   /* if at least one LED is used */

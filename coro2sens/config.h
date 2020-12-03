@@ -40,6 +40,7 @@
 #if defined(NEOPIXEL_PIN)
   #define NUMPIXELS      16
   #define LED_INTENSITY  5
+  #define COLOR_BLACK    0, 0, 0
   #define COLOR_GREEN    0, 3*LED_INTENSITY, 0
   #define COLOR_YELLOW   2*LED_INTENSITY, LED_INTENSITY, 0
   #define COLOR_RED      3*LED_INTENSITY, 0, 0
