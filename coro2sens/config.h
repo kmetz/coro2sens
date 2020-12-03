@@ -4,7 +4,7 @@
 
 // Logging to serial console
 // ----------------------------------------------------------------------------
-#define USE_SERIAL_CONSOLE  1
+#define USE_SERIAL_CONSOLE  0
 //#undef USE_SERIAL_CONSOLE // Uncomment this line to disable logging to serial console (e.g. "deactivates" bright blue LED on NodeMCU)
 #if defined(USE_SERIAL_CONSOLE)
 #define serial_begin   Serial.begin
