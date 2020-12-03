@@ -87,6 +87,7 @@ void setup() {
   // Initialize LED(s).
 #ifdef NEOPIXEL_PIN
   pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
+  pixels.clear(); // Set all pixel colors to 'off'
 #endif
 
   // Initialize GPIOs for discrete LEDs.
