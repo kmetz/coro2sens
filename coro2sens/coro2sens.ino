@@ -1,17 +1,5 @@
 // SETUP =======================================================================
 
-// CO2 Thresholds (ppm).
-//
-// Recommendation from REHVA (Federation of European Heating, Ventilation and Air Conditioning associations, rehva.eu)
-// for preventing COVID-19 aerosol spread especially in schools:
-// - warn: 800, critical: 1000
-// (https://www.rehva.eu/fileadmin/user_upload/REHVA_COVID-19_guidance_document_V3_03082020.pdf)
-//
-// General air quality recommendation by the German Federal Environmental Agency (2008):
-// - warn: 1000, critical: 2000
-// (https://www.umweltbundesamt.de/sites/default/files/medien/pdfs/kohlendioxid_2008.pdf)
-//
-
 /* Platform and feature specific configuration */
 #include "config.h"
 

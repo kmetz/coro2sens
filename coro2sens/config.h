@@ -61,6 +61,17 @@
 
 // CO2 thresholds for warning and critical warning
 // ----------------------------------------------------------------------------
+// CO2 Thresholds (ppm).
+//
+// Recommendation from REHVA (Federation of European Heating, Ventilation and Air Conditioning associations, rehva.eu)
+// for preventing COVID-19 aerosol spread especially in schools:
+// - warn: 800, critical: 1000
+// (https://www.rehva.eu/fileadmin/user_upload/REHVA_COVID-19_guidance_document_V3_03082020.pdf)
+//
+// General air quality recommendation by the German Federal Environmental Agency (2008):
+// - warn: 1000, critical: 2000
+// (https://www.umweltbundesamt.de/sites/default/files/medien/pdfs/kohlendioxid_2008.pdf)
+//
 #define CO2_WARN_PPM     800
 #define CO2_CRITICAL_PPM 1000
 
@@ -78,9 +89,9 @@
 #define WIFI_HOTSPOT_SIZE 255
 
 // How long the graph/log in the WiFi portal should go back, in minutes.
-#define LOG_MINUTES 60
+#define LOG_MINUTES 120
 // Label describing the time axis.
-#define TIME_LABEL "1 hour"
+#define TIME_LABEL "2 Stunden"
 
 #define GRAPH_W 600
 #define GRAPH_H 260
