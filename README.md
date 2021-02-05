@@ -60,6 +60,14 @@ Most devices will open a captive portal, immediately showing the data. You can a
 - *(optional)* A 3V piezo buzzer or a small speaker.
 - *(optional)* You may want to work with Guido Burger's IoT Octopus PCB. This helps fixing the sensor and the NodeMCU, as well as the LEDs.
 - *(optional)* A nice case :) Make sure the sensor has enough air flow.
+- An Arduino IDE (select the board "NodeMCU 1.0 (ESP-12E Module)", v2.7.1 and v2.7.4 have been tested and should work; you may need to install the board support for the "esp8266")
+- Arduino libraries:
+  - FastLED (via the library manager)
+  - zip file libraries
+    (download .zip file, then import it via *Sketch –> Include Library –> Add .ZIP Library...*)
+    - [paulvha/scd30](https://github.com/paulvha/scd30) ([.zip](https://github.com/paulvha/scd30/archive/master.zip))
+    - [me-no-dev/ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) ([.zip](https://github.com/me-no-dev/ESPAsyncTCP/archive/master.zip))
+    - [me-no-dev/ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) ([.zip](https://github.com/me-no-dev/ESPAsyncWebServer/archive/master.zip))
 
 
 
