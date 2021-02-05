@@ -37,7 +37,7 @@ bool alarmHasTriggered = false;
 uint16_t alarmActiveTimer = 0;
 uint16_t co2log[LOG_SIZE] = {0}; // Ring buffer.
 uint32_t co2logPos = 0; // Current buffer start position.
-uint16_t co2logDownsample = max(1, ((((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S) / LOG_SIZE));
+uint16_t co2logDownsample = std::max(1, ((((LOG_MINUTES) * 60) / MEASURE_INTERVAL_S) / LOG_SIZE));
 uint16_t co2avg, co2avgSamples = 0; // Used for downsampling.
 char hotspot_name[WIFI_HOTSPOT_SIZE]; // the buffer for the Wifi hotspot name
 
@@ -372,7 +372,7 @@ void handleCaptivePortal(AsyncWebServerRequest *request) {
   res->print("<!DOCTYPE html><html><head>");
   res->print("<title>coro2sens</title>");
   res->print(R"(<meta content="width=device-width,initial-scale=1" name="viewport">)");
-  res->printf(R"(<meta http-equiv="refresh" content="%d">)", max(MEASURE_INTERVAL_S, 10));
+  res->printf(R"(<meta http-equiv="refresh" content="%d">)", std::max(MEASURE_INTERVAL_S, 10));
   res->print(R"(<style type="text/css">* { font-family:sans-serif }</style>)");
   res->print("</head><body>");
 
